@@ -1,0 +1,31 @@
+import pm4py
+import pandas
+#from pm4py.objects.log.util import func as functools ### Utility scripts see PM4PY tutorials #4 minute 9
+
+'''
+
+
+MAIN LINE:
+1) LOAD XES FROM FOLDER
+2) CONVERT TO DATAFRAME
+3) SELECT STANDARDISED CASE_ID (TRACE LEVEL CONCEPT:NAME), ACTIVITY (EVENT LEVEL CONCEPT:NAME), TIMESTAMP (TIME.TIMESTAMP)
+    2.5) SELECT EXTRA ATTRIBUTES TO BE CHECKED / TO BE IGNORED
+4) CLEAN REST (((NO COMPLEX CLEANING YET, JUST REMOVING COLUMNS)))
+5) SORT AND GROUP BY TIMESTAMP, CASE_ID
+6)
+
+
+'''
+
+
+
+def import_xes(file_path):
+    event_log = pm4py.read_xes(file_path)
+    start_activities = pm4py.get_start_activities(event_log)
+    end_activities = pm4py.get_end_activities(event_log)
+    print(start_activities, '\n', end_activities)
+    print(event_log)
+    for t in event_log:
+        print(t)
+
+import_xes("data/raw/BPI_Challenge_2013_incidents/BPI_Challenge_2013_incidents.xes")
