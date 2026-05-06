@@ -25,13 +25,13 @@ MAIN LINE:
 ## OUTPUT: pandas Dataframe sorted by CASEID, and secondarily TIMESTAMP
 def import_data(file_path: str, drop_columns=None):
 
-    if(drop_columns == None):
+    if(drop_columns is None):
         drop_columns = []
 
     if(file_path.endswith(".xes")):
         df = _import_xes(file_path)
     elif(file_path.endswith(".csv")):
-        raise NotImplementedError
+        raise NotImplementedError("filetype CSV not supported yet")
     #_import_csv()
     else:
         raise ValueError("Unsupported File Type. Must be .xes or .csv")
@@ -52,12 +52,19 @@ def _import_csv(file_path:str):
         timestamp_key="TIMESTAMPNAMETHING"
         )
 def _postprocess(df,drop_columns):
+    required = {"case:concept:name", "time:timestamp"}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing required columns: {missing}")
+
     if drop_columns:
         protected = {"case:concept:name", "concept:name", "time:timestamp"}
-        df = df.drop(columns=[c for c in drop_columns if c not in protected and c in df.columns])
+        invalid = [c for c in drop_columns if c not in df.columns]
+        if invalid:
+            raise ValueError(f"Columns not found: {invalid}")
 
-    df = df.sort_values(by=["case:concept:name", "time:timestamp"])# AUTOMATICALLY SEEMED SORTED, WILL DO THIS FOR REDUNDANCY
-    return df
+        df = df.drop(columns=[c for c in drop_columns if c not in protected])
+    return df.sort_values(by=["case:concept:name", "time:timestamp"])# AUTOMATICALLY SEEMED SORTED, WILL DO THIS FOR REDUNDANCY
 
         
 
