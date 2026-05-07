@@ -23,15 +23,14 @@ MAIN LINE:
 ## IMPORTS DATA IN EITHER XES OR CSV (NOT YET CSV).
 ## INPUT: str:file_path with format ___.xes or ___.csv (NOT YET), list:drop_columns containing what columns to remove
 ## OUTPUT: pandas Dataframe sorted by CASEID, and secondarily TIMESTAMP
-def import_data(file_path: str, drop_columns=None):
+def import_data(file_path: str, drop_columns=None   ):
 
-    if(drop_columns is None):
-        drop_columns = []
+    drop_columns = drop_columns or []
 
     if(file_path.endswith(".xes")):
         df = _import_xes(file_path)
     elif(file_path.endswith(".csv")):
-        raise NotImplementedError("filetype CSV not supported yet")
+        raise NotImplementedError("filetype CSV not supported/implemented yet")
     #_import_csv()
     else:
         raise ValueError("Unsupported File Type. Must be .xes or .csv")
