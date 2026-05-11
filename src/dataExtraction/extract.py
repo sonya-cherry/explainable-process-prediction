@@ -1,5 +1,5 @@
 import pm4py
-import pandas
+import pandas as pd
 #from pm4py.objects.log.util import func as functools ### Utility scripts see PM4PY tutorials #4 minute 9
 
 '''
@@ -43,7 +43,7 @@ def _import_xes(file_path:str):
     return pm4py.read_xes(file_path, return_legacy_log_object=False) #returns dataframe
 
 def _import_csv(file_path:str):
-    df = pandas.read_csv(file_path, sep=';')
+    df = pd.read_csv(file_path, sep=';')
     return pm4py.format_dataframe(
         df,
         case_id="CASEIDNAMINGTHING",
@@ -51,7 +51,7 @@ def _import_csv(file_path:str):
         timestamp_key="TIMESTAMPNAMETHING"
         )
 def _postprocess(df,drop_columns):
-    required = {"case:concept:name", "time:timestamp"}
+    required = {"case:concept:name", "concept:name", "time:timestamp"}
     missing = required - set(df.columns)
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
