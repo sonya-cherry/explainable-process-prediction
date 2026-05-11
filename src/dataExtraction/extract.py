@@ -69,7 +69,5 @@ def _postprocess(df,drop_columns):
 
     
 
-import_data("data/raw/BPI_Challenge_2013_incidents/BPI_Challenge_2013_incidents.xes", ["impact","org:role"])
-
-
+# import_data("data/raw/BPI_Challenge_2013_incidents/BPI_Challenge_2013_incidents.xes", ["impact","org:role"])
 
