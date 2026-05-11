@@ -57,3 +57,12 @@ def compute_duration_outcomes(
 
     return case_df
 
+'''
+Temporary outcome labeller for compute_duration_outcomes()
+input: the original df, and the df from compute_duration_outcomes(), to add a label to each  
+'''
+def tempFormat(df: pd.DataFrame, dur: pd.DataFrame):
+    df = df.merge(dur[["case:concept:name","outcome"]], on="case:concept:name", how="left")
+    return df;
+
+
