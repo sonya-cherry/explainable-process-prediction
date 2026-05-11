@@ -1,16 +1,23 @@
 from pathlib import Path
 from typing import Any, Iterable, Optional, Union
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
+
 """
-This module defines the structure and validation for prediction outputs in Sprint 1.
-The output is a DataFrame with one row per case, containing:
-- case_id: Unique identifier for each case.
-- y_true: The true label for the case (if available).
-- prediction: The predicted class for the case.
-- probability: The predicted probability for the positive class (if available).
-- model: The name of the model used to generate the predictions.
+This module defines the Sprint 1 prediction output and basic visualizations.
+
+Prediction output format:
+- case_id: unique identifier for each case
+- y_true: true binary label for the case, if available
+- prediction: predicted binary class for the case
+- probability: predicted probability for the positive class, if available
+- model: name of the model used to generate the prediction
+
+The default visualization labels follow the project convention that class 1 is
+the positive outcome and class 0 is the negative outcome. If the final outcome
+definition uses more specific names, pass them via the class_labels argument.
 """
 
 
@@ -21,6 +28,17 @@ REQUIRED_OUTPUT_COLUMNS = [
     "probability",
     "model",
 ]
+
+
+
+ALLOWED_BINARY_CLASSES = {0, 1}
+
+DEFAULT_CLASS_LABELS = {
+    0: "Class 0: negative outcome",
+    1: "Class 1: positive outcome",
+    "0": "Class 0: negative outcome",
+    "1": "Class 1: positive outcome",
+}
 
 
 def _to_series(values: Iterable[Any], name: str) -> pd.Series:
@@ -42,13 +60,29 @@ def _validate_equal_lengths(columns: dict[str, pd.Series]) -> None:
         )
 
 
+def _validate_binary_values(series: pd.Series, column_name: str) -> None:
+    """Validate that a column contains only binary 0/1 values, ignoring missing values."""
+    non_missing_values = series.dropna()
+
+    if non_missing_values.empty:
+        return
+
+    actual_classes = set(non_missing_values.unique())
+
+    if not actual_classes.issubset(ALLOWED_BINARY_CLASSES):
+        raise ValueError(
+            f"{column_name} must contain only binary 0/1 values. "
+            f"Found: {actual_classes}"
+        )
+
+
 def _validate_prediction_output(output_df: pd.DataFrame) -> None:
     """Validate that the prediction output is complete and usable for inspection."""
     missing_columns = [
         column for column in REQUIRED_OUTPUT_COLUMNS
         if column not in output_df.columns
     ]
-    """check for missing required columns"""
+
     if missing_columns:
         raise ValueError(f"Missing required output columns: {missing_columns}")
 
@@ -61,20 +95,18 @@ def _validate_prediction_output(output_df: pd.DataFrame) -> None:
     if output_df["prediction"].isna().any():
         raise ValueError("Prediction output contains missing prediction values.")
 
-    if output_df["model"].isna().any() or (output_df["model"].astype(str).str.strip() == "").any():
+    if output_df["model"].isna().any() or (
+        output_df["model"].astype(str).str.strip() == ""
+    ).any():
         raise ValueError("Prediction output contains missing or empty model names.")
-    
-    """check that probabilities, if provided, are valid numbers between 0 and 1"""
-    valid_probabilities = output_df["probability"].dropna()
+
+    valid_probabilities = pd.to_numeric(output_df["probability"], errors="coerce").dropna()
     if not valid_probabilities.between(0, 1).all():
         raise ValueError("Probabilities must be between 0 and 1.")
-    
-    """Check that predictions are binary 0/1 if they are not missing"""
-    allowed_classes = {0, 1}
-    actual_classes = set(output_df["prediction"].dropna().unique())
-    if not actual_classes.issubset(allowed_classes):
 
-        raise ValueError(f"Predictions must be binary 0/1. Found: {actual_classes}")
+    _validate_binary_values(output_df["prediction"], "prediction")
+    _validate_binary_values(output_df["y_true"], "y_true")
+
 
 def create_prediction_output(
     case_ids: Iterable[Any],
@@ -86,18 +118,8 @@ def create_prediction_output(
     """
     Create a structured prediction output table for Sprint 1.
 
-    The output follows REQ-17 and contains one row per case with:
-    case ID, true label, predicted class, predicted probability, and model name.
-
-    Args:
-        case_ids: Case identifiers belonging to the prediction dataset.
-        y_true: True labels. If unavailable, pass None.
-        predictions: Predicted classes.
-        probabilities: Predicted probabilities. If unavailable, pass None.
-        model_name: Name of the model used to generate the predictions.
-
-    Returns:
-        A validated pandas DataFrame with the Sprint 1 prediction output.
+    The output contains one row per case with case ID, true label, predicted class,
+    predicted probability, and model name.
     """
     case_id_series = _to_series(case_ids, "case_id")
     prediction_series = _to_series(predictions, "prediction")
@@ -140,20 +162,7 @@ def save_prediction_output(
     model_name: str = "baseline",
     output_path: Union[str, Path] = "reports/predictions_sprint1.csv",
 ) -> pd.DataFrame:
-    """
-    Create, validate, and save the Sprint 1 prediction output as CSV.
-
-    Args:
-        case_ids: Case identifiers belonging to the prediction dataset.
-        y_true: True labels. If unavailable, pass None.
-        predictions: Predicted classes.
-        probabilities: Predicted probabilities. If unavailable, pass None.
-        model_name: Name of the model used to generate the predictions.
-        output_path: Destination path for the CSV file.
-
-    Returns:
-        The saved prediction output DataFrame.
-    """
+    """Create, validate, and save the Sprint 1 prediction output as CSV."""
     output_df = create_prediction_output(
         case_ids=case_ids,
         y_true=y_true,
@@ -170,15 +179,7 @@ def save_prediction_output(
 
 
 def load_prediction_output(input_path: Union[str, Path]) -> pd.DataFrame:
-    """
-    Load and validate a saved prediction output CSV.
-
-    Args:
-        input_path: Path to a saved prediction output CSV.
-
-    Returns:
-        A validated prediction output DataFrame.
-    """
+    """Load and validate a saved prediction output CSV."""
     input_path = Path(input_path)
 
     if not input_path.exists():
@@ -190,7 +191,170 @@ def load_prediction_output(input_path: Union[str, Path]) -> pd.DataFrame:
     return output_df
 
 
+def _prepare_distribution_table(
+    series: pd.Series,
+    value_column_name: str,
+    class_labels: Optional[dict[Any, str]] = None,
+) -> pd.DataFrame:
+    """Create a count and percentage table for a categorical distribution."""
+    counts = series.value_counts(dropna=False).sort_index()
+    total = counts.sum()
+
+    distribution_df = counts.reset_index()
+    distribution_df.columns = [value_column_name, "count"]
+    distribution_df["percentage"] = distribution_df["count"] / total * 100
+
+    if class_labels is not None:
+        label_column = f"{value_column_name}_label"
+        distribution_df[label_column] = distribution_df[value_column_name].map(class_labels)
+        distribution_df[label_column] = distribution_df[label_column].fillna(
+            distribution_df[value_column_name].astype(str)
+        )
+
+    return distribution_df
+
+
+def _save_horizontal_distribution_chart(
+    distribution_df: pd.DataFrame,
+    category_column: str,
+    title: str,
+    xlabel: str,
+    output_path: Union[str, Path],
+) -> Path:
+    """Save a clean horizontal bar chart with count and percentage labels."""
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    labels = distribution_df[category_column].astype(str)
+    counts = distribution_df["count"]
+    percentages = distribution_df["percentage"]
+
+    fig_height = max(3.5, 0.6 * len(distribution_df) + 1.5)
+    fig, ax = plt.subplots(figsize=(8, fig_height))
+
+    bars = ax.barh(labels, counts)
+    ax.bar_label(
+        bars,
+        labels=[
+            f"{count} ({percentage:.1f}%)"
+            for count, percentage in zip(counts, percentages)
+        ],
+        padding=4,
+    )
+
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel("")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.grid(axis="x", linestyle="--", alpha=0.4)
+    ax.set_axisbelow(True)
+
+    max_count = counts.max()
+    ax.set_xlim(0, max_count * 1.25 if max_count > 0 else 1)
+
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+    return output_path
+
+
+def plot_prediction_distribution(
+    prediction_output: Union[pd.DataFrame, str, Path],
+    output_path: Union[str, Path] = "figures/prediction_distribution_sprint1.png",
+    class_labels: Optional[dict[Any, str]] = None,
+) -> Path:
+    """Create and save a horizontal bar chart of predicted classes."""
+    if isinstance(prediction_output, (str, Path)):
+        output_df = load_prediction_output(prediction_output)
+    else:
+        output_df = prediction_output.copy()
+        _validate_prediction_output(output_df)
+
+    if class_labels is None:
+        class_labels = DEFAULT_CLASS_LABELS
+
+    distribution_df = _prepare_distribution_table(
+        output_df["prediction"],
+        value_column_name="prediction",
+        class_labels=class_labels,
+    )
+
+    return _save_horizontal_distribution_chart(
+        distribution_df=distribution_df,
+        category_column="prediction_label",
+        title="Prediction Distribution by Outcome Class",
+        xlabel="Number of Cases",
+        output_path=output_path,
+    )
+
+
+def plot_label_distribution(
+    prediction_output: Union[pd.DataFrame, str, Path],
+    output_path: Union[str, Path] = "figures/label_distribution_sprint1.png",
+    class_labels: Optional[dict[Any, str]] = None,
+) -> Path:
+    """Create and save a horizontal bar chart of true labels."""
+    if isinstance(prediction_output, (str, Path)):
+        output_df = load_prediction_output(prediction_output)
+    else:
+        output_df = prediction_output.copy()
+        _validate_prediction_output(output_df)
+
+    if output_df["y_true"].isna().all():
+        raise ValueError("Cannot plot label distribution because y_true is not available.")
+
+    if class_labels is None:
+        class_labels = DEFAULT_CLASS_LABELS
+
+    distribution_df = _prepare_distribution_table(
+        output_df["y_true"],
+        value_column_name="true_label",
+        class_labels=class_labels,
+    )
+
+    return _save_horizontal_distribution_chart(
+        distribution_df=distribution_df,
+        category_column="true_label_label",
+        title="True Outcome Distribution",
+        xlabel="Number of Cases",
+        output_path=output_path,
+    )
+
+
+def create_sprint1_visualizations(
+    prediction_output: Union[pd.DataFrame, str, Path] = "reports/predictions_sprint1.csv",
+    figures_dir: Union[str, Path] = "figures",
+    class_labels: Optional[dict[Any, str]] = None,
+) -> dict[str, Path]:
+    """Create the basic Sprint 1 visualizations from prediction output."""
+    figures_dir = Path(figures_dir)
+    figures_dir.mkdir(parents=True, exist_ok=True)
+
+    saved_paths = {
+        "prediction_distribution": plot_prediction_distribution(
+            prediction_output=prediction_output,
+            output_path=figures_dir / "prediction_distribution_sprint1.png",
+            class_labels=class_labels,
+        )
+    }
+
+    try:
+        saved_paths["label_distribution"] = plot_label_distribution(
+            prediction_output=prediction_output,
+            output_path=figures_dir / "label_distribution_sprint1.png",
+            class_labels=class_labels,
+        )
+    except ValueError:
+        pass
+
+    return saved_paths
+
+
 if __name__ == "__main__":
+    # Demo data only: these values are manually created to test this module.
+    # They are not derived from the BPI 2013 event log or from the final model.
     demo_output = save_prediction_output(
         case_ids=["case_1", "case_2", "case_3"],
         y_true=[0, 1, 1],
@@ -201,3 +365,6 @@ if __name__ == "__main__":
     )
 
     print(demo_output.head())
+
+    saved_figures = create_sprint1_visualizations(demo_output)
+    print("Saved figures:", saved_figures)
