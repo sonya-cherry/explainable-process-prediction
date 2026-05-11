@@ -63,7 +63,18 @@ def _validate_prediction_output(output_df: pd.DataFrame) -> None:
 
     if output_df["model"].isna().any() or (output_df["model"].astype(str).str.strip() == "").any():
         raise ValueError("Prediction output contains missing or empty model names.")
+    
+    """check that probabilities, if provided, are valid numbers between 0 and 1"""
+    valid_probabilities = output_df["probability"].dropna()
+    if not valid_probabilities.between(0, 1).all():
+        raise ValueError("Probabilities must be between 0 and 1.")
+    
+    """Check that predictions are binary 0/1 if they are not missing"""
+    allowed_classes = {0, 1}
+    actual_classes = set(output_df["prediction"].dropna().unique())
+    if not actual_classes.issubset(allowed_classes):
 
+        raise ValueError(f"Predictions must be binary 0/1. Found: {actual_classes}")
 
 def create_prediction_output(
     case_ids: Iterable[Any],
