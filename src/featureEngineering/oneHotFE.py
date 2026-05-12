@@ -39,7 +39,7 @@ def Encode(df: pd.DataFrame, prefix: bool) -> tuple[csr_matrix, pd.Series, pd.Se
         raise ValueError(f"Missing required columns: {missing}") 
 
 
-    #OH encode each categorical column
+    #encode columns
     featureMatrix = pd.DataFrame(index=df["case:concept:name"].unique())
     for col in df.columns:
         if col in {"case:concept:name", "outcome", "time:timestamp"}:
@@ -54,9 +54,9 @@ def Encode(df: pd.DataFrame, prefix: bool) -> tuple[csr_matrix, pd.Series, pd.Se
         
         featureMatrix = featureMatrix.join(temp)
     
-    y = df.groupby("case:concept:name")["outcome"].first() ##Outcome as time series
-    case_ids = featureMatrix.index
-    X_sparse = csr_matrix(featureMatrix.fillna(0).values)
+    y = df.groupby("case:concept:name")["outcome"].first() ##outcome as series
+    case_ids = featureMatrix.index ##caseIds as series
+    X_sparse = csr_matrix(featureMatrix.fillna(0).values) #feature matrix as sparse matrix
 
     return X_sparse,y,case_ids
 
