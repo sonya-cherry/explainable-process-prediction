@@ -47,14 +47,19 @@ def compute_duration_outcomes(
     df = df.copy()
     df[timestamp_col] = pd.to_datetime(df[timestamp_col])
 
-    case_df = df.groupby(case_col)[timestamp_col].agg(
-        case_start="min",
-        case_end="max",
+    case_df = (
+        df.groupby(case_col)[timestamp_col]
+        .agg(
+            case_start="min",
+            case_end="max",
+        )
+        .reset_index()
     )
+
     case_df["duration"] = case_df["case_end"] - case_df["case_start"]
     outcome_threshold = case_df["duration"].median()
     case_df["outcome"] = (case_df["duration"] <= outcome_threshold).astype(int)
-
+    
     return case_df
 
 '''
@@ -63,6 +68,6 @@ input: the original df, and the df from compute_duration_outcomes(), to add a la
 '''
 def tempFormat(df: pd.DataFrame, dur: pd.DataFrame):
     df = df.merge(dur[["case:concept:name","outcome"]], on="case:concept:name", how="left")
-    return df;
+    return df
 
 
