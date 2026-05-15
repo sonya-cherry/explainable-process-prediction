@@ -18,6 +18,10 @@ Prediction output format:
 The default visualization labels follow the project convention that class 1 is
 the positive outcome and class 0 is the negative outcome. If the final outcome
 definition uses more specific names, pass them via the class_labels argument.
+
+The __main__ block uses artificial demo data only. For real Sprint 1 results,
+call save_model_prediction_output(...) from the baseline pipeline after the model
+has created predictions.
 """
 
 
@@ -189,6 +193,44 @@ def load_prediction_output(input_path: Union[str, Path]) -> pd.DataFrame:
     _validate_prediction_output(output_df)
 
     return output_df
+
+
+def save_model_prediction_output(
+    model: Any,
+    features: Any,
+    case_ids: Iterable[Any],
+    y_true: Optional[Iterable[Any]],
+    model_name: str,
+    output_path: Union[str, Path] = "reports/predictions_sprint1.csv",
+) -> pd.DataFrame:
+    """
+    Generate predictions from a trained model and save the real Sprint 1 output.
+
+    This function connects the output module to the actual model pipeline. It does
+    not train the model itself. It expects that features, case_ids, and y_true are
+    already aligned row by row.
+    """
+    if not hasattr(model, "predict"):
+        raise TypeError("Model must provide a predict method.")
+
+    predictions = model.predict(features)
+
+    probabilities = None
+    if hasattr(model, "predict_proba"):
+        prediction_probabilities = model.predict_proba(features)
+        if prediction_probabilities.shape[1] > 1:
+            probabilities = prediction_probabilities[:, 1]
+        else:
+            probabilities = prediction_probabilities[:, 0]
+
+    return save_prediction_output(
+        case_ids=case_ids,
+        y_true=y_true,
+        predictions=predictions,
+        probabilities=probabilities,
+        model_name=model_name,
+        output_path=output_path,
+    )
 
 
 def _prepare_distribution_table(
@@ -364,7 +406,11 @@ if __name__ == "__main__":
         output_path="reports/predictions_sprint1_demo.csv",
     )
 
+    print("Demo prediction output created:")
     print(demo_output.head())
 
-    saved_figures = create_sprint1_visualizations(demo_output)
-    print("Saved figures:", saved_figures)
+    saved_figures = create_sprint1_visualizations(
+        prediction_output=demo_output,
+        figures_dir="figures/demo",
+    )
+    print("Demo figures saved:", saved_figures)
