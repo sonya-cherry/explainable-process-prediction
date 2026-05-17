@@ -23,7 +23,7 @@ MAIN LINE:
 ## IMPORTS DATA IN EITHER XES OR CSV (NOT YET CSV).
 ## INPUT: str:file_path with format ___.xes or ___.csv (NOT YET), list:drop_columns containing what columns to remove
 ## OUTPUT: pandas Dataframe sorted by CASEID, and secondarily TIMESTAMP
-def import_data(file_path: str, drop_columns=None   ):
+def import_data(file_path: str, drop_columns=None):
 
     drop_columns = drop_columns or []
 
@@ -31,7 +31,7 @@ def import_data(file_path: str, drop_columns=None   ):
         df = _import_xes(file_path)
     elif(file_path.endswith(".csv")):
         raise NotImplementedError("filetype CSV not supported/implemented yet")
-    #_import_csv()
+        #_import_csv()
     else:
         raise ValueError("Unsupported File Type. Must be .xes or .csv")
     
@@ -46,9 +46,9 @@ def _import_csv(file_path:str):
     df = pd.read_csv(file_path, sep=';')
     return pm4py.format_dataframe(
         df,
-        case_id="CASEIDNAMINGTHING",
-        activity_key="ACTIVITYNAMINGTHING",
-        timestamp_key="TIMESTAMPNAMETHING"
+        case_id="PLACEHOLDER1",
+        activity_key="PLACEHOLDER2",
+        timestamp_key="PLACEHOLDER3"
         )
 def _postprocess(df,drop_columns):
     required = {"case:concept:name", "concept:name", "time:timestamp"}

@@ -39,7 +39,7 @@ def Encode(df: pd.DataFrame, prefix: bool) -> tuple[csr_matrix, pd.Series, pd.Se
         raise ValueError(f"Missing required columns: {missing}") 
 
 
-    #encode columns
+    #encode
     featureMatrix = pd.DataFrame(index=df["case:concept:name"].unique())
     for col in df.columns:
         if col in {"case:concept:name", "outcome", "time:timestamp"}:
