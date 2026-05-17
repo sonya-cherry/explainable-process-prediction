@@ -1,0 +1,73 @@
+import pm4py
+import pandas as pd
+#from pm4py.objects.log.util import func as functools ### Utility scripts see PM4PY tutorials #4 minute 9
+
+'''
+
+
+MAIN LINE:
+1) LOAD XES FROM FOLDER
+2) CONVERT TO DATAFRAME
+3) SELECT STANDARDISED CASE_ID (TRACE LEVEL CONCEPT:NAME), ACTIVITY (EVENT LEVEL CONCEPT:NAME), TIMESTAMP (TIME.TIMESTAMP)
+    2.5) SELECT EXTRA ATTRIBUTES TO BE CHECKED / TO BE IGNORED
+4) CLEAN REST (((NO COMPLEX CLEANING YET, JUST REMOVING COLUMNS)))
+5) SORT AND GROUP BY TIMESTAMP, CASE_ID
+6) 
+
+
+'''
+
+
+       
+
+## IMPORTS DATA IN EITHER XES OR CSV (NOT YET CSV).
+## INPUT: str:file_path with format ___.xes or ___.csv (NOT YET), list:drop_columns containing what columns to remove
+## OUTPUT: pandas Dataframe sorted by CASEID, and secondarily TIMESTAMP
+def import_data(file_path: str, drop_columns=None):
+
+    drop_columns = drop_columns or []
+
+    if(file_path.endswith(".xes")):
+        df = _import_xes(file_path)
+    elif(file_path.endswith(".csv")):
+        raise NotImplementedError("filetype CSV not supported/implemented yet")
+        #_import_csv()
+    else:
+        raise ValueError("Unsupported File Type. Must be .xes or .csv")
+    
+    df = _postprocess(df,drop_columns)
+    return df
+
+
+def _import_xes(file_path:str):
+    return pm4py.read_xes(file_path, return_legacy_log_object=False) #returns dataframe
+
+def _import_csv(file_path:str):
+    df = pd.read_csv(file_path, sep=';')
+    return pm4py.format_dataframe(
+        df,
+        case_id="PLACEHOLDER1",
+        activity_key="PLACEHOLDER2",
+        timestamp_key="PLACEHOLDER3"
+        )
+def _postprocess(df,drop_columns):
+    required = {"case:concept:name", "concept:name", "time:timestamp"}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing required columns: {missing}")
+
+    if drop_columns:
+        protected = {"case:concept:name", "concept:name", "time:timestamp"}
+        invalid = [c for c in drop_columns if c not in df.columns]
+        if invalid:
+            raise ValueError(f"Columns not found: {invalid}")
+
+        df = df.drop(columns=[c for c in drop_columns if c not in protected])
+    return df.sort_values(by=["case:concept:name", "time:timestamp"])# AUTOMATICALLY SEEMED SORTED, WILL DO THIS FOR REDUNDANCY
+
+        
+
+    
+
+# import_data("data/raw/BPI_Challenge_2013_incidents/BPI_Challenge_2013_incidents.xes", ["impact","org:role"])
+
