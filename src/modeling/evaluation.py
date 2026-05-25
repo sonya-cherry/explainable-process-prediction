@@ -25,11 +25,6 @@ visualizations, including ROC curve and confusion matrix plots.
 def compute_basic_metrics(y_true, y_pred) -> dict[str, float]:
     """
     Compute basic binary classification metrics.
-
-    Args:
-        y_true: True binary labels.
-        y_pred: Predicted binary labels.
-
     Returns:
         Dictionary containing accuracy, F1-score, precision, and recall.
     """
@@ -44,12 +39,6 @@ def compute_basic_metrics(y_true, y_pred) -> dict[str, float]:
 def compute_metrics_with_roc_auc(y_true, y_pred, y_score) -> dict[str, float]:
     """
     Compute binary classification metrics including ROC AUC.
-
-    Args:
-        y_true: True binary labels.
-        y_pred: Predicted binary labels.
-        y_score: Predicted probabilities or decision scores for the positive class.
-
     Returns:
         Dictionary containing basic metrics and ROC AUC.
     """
@@ -110,14 +99,7 @@ def save_confusion_matrix_plot(
     output_path: Union[str, Path] = "figures/confusion_matrix_sprint2.png",
 ) -> Path:
     """
-    Create and save a confusion matrix plot.
-
-    Args:
-        y_true: True binary labels.
-        y_pred: Predicted binary labels.
-        model_name: Name of the evaluated model.
-        output_path: Destination path for the confusion matrix figure.
-
+    Create and save a confusion matrix.
     Returns:
         Path to the saved figure.
     """
@@ -139,4 +121,38 @@ def save_confusion_matrix_plot(
     plt.close(fig)
 
     return output_path
+
+
+#saving process of the evaluation metrics and their visualisations 
+def save_evaluation_visualizations(
+    y_true,
+    y_pred,
+    y_score,
+    model_name: str = "model",
+    figures_dir: Union[str, Path] = "figures",
+) -> dict[str, Path]:
+    """
+    Create and save the standard Sprint 2 evaluation visualizations.
+    Returns:
+        Dictionary containing the saved paths for the ROC curve and confusion matrix.
+    """
+    figures_dir = Path(figures_dir)
+    figures_dir.mkdir(parents=True, exist_ok=True)
+
+    return {
+        #save of the ROC Curve
+        "roc_curve": save_roc_curve(
+            y_true=y_true,
+            y_score=y_score,
+            model_name=model_name,
+            output_path=figures_dir / "roc_curve_sprint2.png",
+        ),
+        #save of the confusion matrix
+        "confusion_matrix": save_confusion_matrix_plot(
+            y_true=y_true,
+            y_pred=y_pred,
+            model_name=model_name,
+            output_path=figures_dir / "confusion_matrix_sprint2.png",
+        ),
+    }
 
