@@ -1,7 +1,7 @@
 
 from pathlib import Path
 
-from typing import Union
+from typing import Optional, Union
 
 import pandas as pd
 
@@ -26,12 +26,6 @@ This module provides basic classification metrics, model comparison tables,
 and Sprint 2 evaluation visualizations, including ROC curve and confusion
 matrix plots.
 """
-
-
-
-
-
-
 
 def compute_basic_metrics(y_true, y_pred) -> dict[str, float]:
     """
@@ -98,6 +92,7 @@ def evaluate_model(model, X, y, model_name: str) -> dict:
     return metrics
 
 
+
 def build_evaluation_table(results: list[dict]) -> pd.DataFrame:
     """
     Build a model comparison table from metric dictionaries.
@@ -110,6 +105,59 @@ def build_evaluation_table(results: list[dict]) -> pd.DataFrame:
     """
     columns = ["model", "accuracy", "precision", "recall", "f1", "roc_auc"]
     return pd.DataFrame(results)[columns]
+
+
+# --- Model comparison plotting ---
+
+def save_model_comparison_plot(
+    evaluation_table: pd.DataFrame,
+    output_path: Union[str, Path] = "figures/model_comparison_sprint2.png",
+    metrics: Optional[list[str]] = None,
+) -> Path:
+    """
+    Create and save a bar chart comparing selected metrics across models.
+
+    Args:
+        evaluation_table: DataFrame containing one row per model and metric columns.
+        output_path: Destination path for the model comparison figure.
+        metrics: Metric columns to visualize. If None, F1 and ROC AUC are used
+            when available.
+
+    Returns:
+        Path to the saved comparison plot.
+    """
+    if metrics is None:
+        metrics = [metric for metric in ["f1", "roc_auc"] if metric in evaluation_table.columns]
+
+    if not metrics:
+        raise ValueError("No valid metric columns were provided for the comparison plot.")
+
+    required_columns = ["model", *metrics]
+    missing_columns = [column for column in required_columns if column not in evaluation_table.columns]
+
+    if missing_columns:
+        raise ValueError(f"Missing columns for model comparison plot: {missing_columns}")
+
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    plot_df = evaluation_table[required_columns].set_index("model")
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    plot_df.plot(kind="bar", ax=ax)
+
+    ax.set_title("Model Comparison - Sprint 2")
+    ax.set_xlabel("Model")
+    ax.set_ylabel("Metric Value")
+    ax.set_ylim(0, 1)
+    ax.legend(title="Metric")
+    ax.grid(axis="y", alpha=0.4)
+
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+    return output_path
 
 
 def save_roc_curve(

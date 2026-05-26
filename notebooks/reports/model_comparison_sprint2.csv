@@ -1,0 +1,2 @@
+model,accuracy,precision,recall,f1,roc_auc
+majority_baseline,0.499669093315685,0.499669093315685,1.0,0.6663724624889673,0.5
