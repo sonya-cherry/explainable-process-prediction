@@ -16,12 +16,10 @@ call save_prediction_output() or save_model_prediction_output() from the
 pipeline after the model has created predictions.
 """
 
-"""For futute analysis: 
-for sprint 2 my task was mostly to
-create a more structured output format and basic visualizations.
-I did not implement any new evaluation metrics or advanced visualizations, but I designed the output format to be flexible and extensible for future analysis. 
-The output includes metadata columns for model name, model type, dataset split, threshold, and sprint, which will allow us to easily filter and compare different models and experiments in the future.
-"""
+# Sprint 2 note:
+# This module extends the prediction output format with metadata columns for
+# model name, model type, dataset split, threshold, and sprint. These fields
+# support later filtering and comparison of different models and experiments.
 REQUIRED_OUTPUT_COLUMNS = [
     "case_id",
     "y_true",
@@ -43,17 +41,16 @@ DEFAULT_CLASS_LABELS = {
     "1": "Class 1: positive outcome",
 }
 
-"""Convert an iterable to a pandas Series with a stable name."""
 def _to_series(values: Iterable[Any], name: str) -> pd.Series:
+    """Convert an iterable to a pandas Series with a stable name."""
     if isinstance(values, pd.Series):
         return values.reset_index(drop=True).rename(name)
     return pd.Series(list(values), name=name)
 
 
 
-"""Validate that all output columns have the same number of rows."""
 def _validate_equal_lengths(columns: dict[str, pd.Series]) -> None:
-   
+    """Validate that all output columns have the same number of rows."""
     lengths = {column_name: len(values) for column_name, values in columns.items()}
     unique_lengths = set(lengths.values())
 
@@ -63,8 +60,8 @@ def _validate_equal_lengths(columns: dict[str, pd.Series]) -> None:
             f"Received lengths: {lengths}"
         )
 
-"""Validate that a column contains only binary 0/1 values, ignoring missing values."""
 def _validate_binary_values(series: pd.Series, column_name: str) -> None:
+    """Validate that a column contains only binary 0/1 values, ignoring missing values."""
     non_missing_values = series.dropna()
 
     if non_missing_values.empty:
@@ -78,8 +75,8 @@ def _validate_binary_values(series: pd.Series, column_name: str) -> None:
             f"Found: {actual_classes}"
         )
 
-"""Validate that the prediction output is complete and usable for inspection."""
 def _validate_prediction_output(output_df: pd.DataFrame) -> None:
+    """Validate that the prediction output is complete and usable for inspection."""
     missing_columns = [
         column for column in REQUIRED_OUTPUT_COLUMNS
         if column not in output_df.columns
@@ -168,16 +165,18 @@ def create_prediction_output(
     threshold_series = pd.Series([threshold] * len(prediction_series), name="threshold")
     sprint_series = pd.Series([sprint] * len(prediction_series), name="sprint")
 
+    # Sprint 2 metadata columns are included to support filtering and comparison
+    # between different models, dataset splits, thresholds, and sprint outputs.
     columns = {
         "case_id": case_id_series,
         "y_true": y_true_series,
         "prediction": prediction_series,
         "probability": probability_series,
         "model": model_series,
-        "model_type": model_type_series, """sprint2 metadata columns for future analysis and filtering"""
-        "dataset_split": dataset_split_series,"""sprint2 metadata columns for future analysis and filtering"""
-        "threshold": threshold_series,"""sprint2 metadata columns for future analysis and filtering"""
-        "sprint": sprint_series, 
+        "model_type": model_type_series,
+        "dataset_split": dataset_split_series,
+        "threshold": threshold_series,
+        "sprint": sprint_series,
     }
 
     _validate_equal_lengths(columns)
@@ -471,7 +470,7 @@ if __name__ == "__main__":
         output_path="reports/predictions_sprint2_demo.csv",
     )
 
-    print("Output created:")
+    print("Demo output created:")
     print(demo_output.head())
 
     saved_figures = create_prediction_visualizations(

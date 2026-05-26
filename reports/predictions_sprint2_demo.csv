@@ -1,0 +1,4 @@
+case_id,y_true,prediction,probability,model,model_type,dataset_split,threshold,sprint
+case_1,0,0,0.1,demo_baseline,baseline,test,0.5,sprint2
+case_2,1,1,0.85,demo_baseline,baseline,test,0.5,sprint2
+case_3,1,0,0.4,demo_baseline,baseline,test,0.5,sprint2
