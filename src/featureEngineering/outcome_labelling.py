@@ -25,7 +25,7 @@ INPUT:1)Dataframe from extract.py
                         ]
 
 
-                    Relevant operators: <,>,<=,>=,==,!=,contains, endsWith, startsWith
+                    Relevant operators: <,>,<=,>=,==,!=,contains, endsWith, startsWith, distinct, identical 
 
 
 OUTPUT: Dataframe with outcome column. True for accepting/positive outcome, False for rejecting/negative outcome
