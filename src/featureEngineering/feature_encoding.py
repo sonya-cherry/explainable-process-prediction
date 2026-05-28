@@ -26,7 +26,7 @@ OUTPUT: Sparse matrix, outcome label series, and caseId series, as a tuple.
 '''
 
 
-def Encode(df: pd.DataFrame, prefix: bool) -> tuple[csr_matrix, pd.Series, pd.Series]:
+def Encode(df: pd.DataFrame) -> tuple[csr_matrix, pd.Series, pd.Series]:
     
 
 
@@ -59,6 +59,22 @@ def Encode(df: pd.DataFrame, prefix: bool) -> tuple[csr_matrix, pd.Series, pd.Se
     X_sparse = csr_matrix(featureMatrix.fillna(0).values) #feature matrix as sparse matrix
 
     return X_sparse,y,case_ids
+
+
+
+
+
+def Encode2(df: pd.Dataframe) -> tuple[csr_matrix, pd.Series, pd.Series]:
+    required = {"case:concept:name", "outcome"}
+    missing = required - set(df.columns)
+
+    if missing: 
+        raise ValueError(f"Missing required columns: {missing}")
+
+
+    #Encode
+
+
 
     
     

@@ -34,7 +34,7 @@ OUTPUT: Dataframe with outcome column. True for accepting/positive outcome, Fals
 
 
 
-def outcome(df: pd.DataFrame, outcome: list, prefix:bool):
+def outcome(df: pd.DataFrame, outcome: list):
     df = df.copy()
     case_col = "case:concept:name"
     def always(op):
@@ -154,9 +154,7 @@ def outcome(df: pd.DataFrame, outcome: list, prefix:bool):
             rule.get("value", None)
         )
         df["outcome"] &= condition
-        used_features.add(rule["feature"])
 
-    df = df.drop(columns=list(used_features))
     return df;
 
 
