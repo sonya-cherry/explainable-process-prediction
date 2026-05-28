@@ -1,21 +1,8 @@
 import pm4py
 import pandas as pd
+import numpy as np
 #from pm4py.objects.log.util import func as functools ### Utility scripts see PM4PY tutorials #4 minute 9
 
-'''
-
-
-MAIN LINE:
-1) LOAD XES FROM FOLDER
-2) CONVERT TO DATAFRAME
-3) SELECT STANDARDISED CASE_ID (TRACE LEVEL CONCEPT:NAME), ACTIVITY (EVENT LEVEL CONCEPT:NAME), TIMESTAMP (TIME.TIMESTAMP)
-    2.5) SELECT EXTRA ATTRIBUTES TO BE CHECKED / TO BE IGNORED
-4) CLEAN REST (((NO COMPLEX CLEANING YET, JUST REMOVING COLUMNS)))
-5) SORT AND GROUP BY TIMESTAMP, CASE_ID
-6) 
-
-
-'''
 
 
        
@@ -71,10 +58,36 @@ def _postprocess(df,drop_columns):
             raise ValueError(f"Columns not found: {invalid}")
 
         df = df.drop(columns=[c for c in drop_columns if c not in protected])
-    return df.sort_values(by=["case:concept:name", "time:timestamp"]) #added for redundancy
+    return df
 
-        
-import_data("data/raw/BPI_Challenge_2013_incidents/BPI_Challenge_2013_incidents.xes", ["impact","org:role"])
 
-    
 
+def split(df: pd.DataFrame, train_ratio=0.7, val_ratio=0.15, test_ratio=0.15)-> tuple[pd.Dataframe, pd.Dataframe, pd.Dataframe] :
+    if not np.isclose(train_ratio + val_ratio + test_ratio, 1.0) :
+        raise ValueError("Ratios must sum to 1")
+
+    case_col = "case:concept:name"
+    time_col = "time:timestamp"
+
+    case_order = (
+        df.groupby(case_col)[time_col]
+          .min()
+          .sort_values()
+    )
+
+    cases = case_order.index.to_list()
+
+    n = len(cases)
+
+    train_end = int(n * train_ratio)
+    val_end = train_end + int(n * val_ratio)
+
+    train_cases = set(cases[:train_end])
+    val_cases = set(cases[train_end:val_end])
+    test_cases = set(cases[val_end:])
+
+    train_df = df[df[case_col].isin(train_cases)].copy()
+    val_df = df[df[case_col].isin(val_cases)].copy()
+    test_df = df[df[case_col].isin(test_cases)].copy()
+
+    return train_df, val_df, test_df
