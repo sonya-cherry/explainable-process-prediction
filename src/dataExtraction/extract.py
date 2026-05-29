@@ -9,7 +9,7 @@ import numpy as np
 
 ## IMPORTS DATA IN EITHER XES OR CSV.
 ## INPUT: str:file_path with format ___.xes or ___.csv, list:drop_columns containing what columns to remove, column names relevant to csv files
-## OUTPUT: pandas Dataframe sorted by CASEID, and secondarily TIMESTAMP
+## OUTPUT: pandas DataFrame sorted by CASEID, and secondarily TIMESTAMP
 def import_data(file_path: str, str_caseID: str = None, str_activity: str = None, str_timestamp:str = None, drop_columns=None,):
 
     drop_columns = drop_columns or []
@@ -62,7 +62,7 @@ def _postprocess(df,drop_columns):
 
 
 
-def split(df: pd.DataFrame, train_ratio=0.7, val_ratio=0.15, test_ratio=0.15)-> tuple[pd.Dataframe, pd.Dataframe, pd.Dataframe] :
+def split(df: pd.DataFrame, train_ratio=0.7, val_ratio=0.15, test_ratio=0.15)-> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame] :
     if not np.isclose(train_ratio + val_ratio + test_ratio, 1.0) :
         raise ValueError("Ratios must sum to 1")
 
