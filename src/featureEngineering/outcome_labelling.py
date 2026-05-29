@@ -5,9 +5,6 @@ import operator
 
 
 '''
-FIRST IDEA: take as input a List of Dictionaries, that defines outcome relevant values for each column/attribute. User Layer code could then decide how to define outcomes,
-            act as a safety layer etc. NOT OPTIMIZED, but maybe good? 
-
 INPUT:1)Dataframe from extract.py
       2)List of Dicts. Format:
                         rules = [
@@ -25,10 +22,13 @@ INPUT:1)Dataframe from extract.py
                         ]
 
 
-                    Relevant operators: <,>,<=,>=,==,!=,contains, endsWith, startsWith, distinct, identical 
+                    Relevant operators: <,>,<=,>=,==,!=,contains, endsWith, startsWith
 
 
 OUTPUT: Dataframe with outcome column. True for accepting/positive outcome, False for rejecting/negative outcome
+
+WARNING: ANY OUTCOME LABELLING ACCORDING TO GENERATED RULES IS ALLOWED AND WILL NOT LEAD TO ERRORS. HOWEVER, TARGET FEATURE LEAKAGE CANNOT BE UNIFORMLY PREVENTED WITHOUT KNOWLEDGE OF DATASET RELATIONS AND OUTCOME LABELS. 
+BE ADVISED THAT CERTAIN RULES CAN LEAD TO LEAKAGE BASED OVERFITTING AND ERRONEOUS RESULTS. DO NOT TAKE THE ABILITY TO CREATE ANY OUTCOME CLASSIFIER AS THE ABILITY TO CLASSIFY ANY OUTCOME WELL.
 '''                                  
 
 
