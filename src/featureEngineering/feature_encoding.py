@@ -37,11 +37,11 @@ SHOULD SOLVE:
 4) TEMPORAL FEATURES
 5) PREVENTS CATEGORICAL EXPLOSION BY CHECKING NUMBER OF DISTINCT VALUES
 """
-def Encode(df: pd.DataFrame) -> tuple[csr_matrix, pd.Series, pd.Series]:
+def Encode(df: pd.DataFrame, feature_columns = None) -> tuple[csr_matrix, pd.Series, pd.Series, list]:
     df = df.copy()
     required = {"case:concept:name", "outcome"}
     missing = required - set(df.columns)
-    transition_columns = {"concept:name","lifecycle:transition","org:resource"}
+    transition_columns = {"concept:name","org:resource"}
 
 
     '''SAFETY CHECK'''
@@ -49,6 +49,8 @@ def Encode(df: pd.DataFrame) -> tuple[csr_matrix, pd.Series, pd.Series]:
     if missing: 
         raise ValueError(f"Missing required columns: {missing}")
     featureMatrix = pd.DataFrame(index=df["case:concept:name"].unique())
+    
+        
 
 
     ''' TIME BASED FEATURES'''
@@ -71,7 +73,7 @@ def Encode(df: pd.DataFrame) -> tuple[csr_matrix, pd.Series, pd.Series]:
     
     original_columns = list(df.columns)
     for col in original_columns:
-        if col in {"case:concept:name", "outcome", "time:timestamp"}:
+        if col in {"case:concept:name", "outcome", "time:timestamp", "lifecycle:transition"}:
             continue
 
         if ((pd.api.types.is_string_dtype(df[col]) or pd.api.types.is_categorical_dtype(df[col])) and df[col].nunique() < 100):
@@ -98,9 +100,13 @@ def Encode(df: pd.DataFrame) -> tuple[csr_matrix, pd.Series, pd.Series]:
     
     y = df.groupby("case:concept:name")["outcome"].first() ##outcome as series
     case_ids = featureMatrix.index ##caseIds as series
+    if feature_columns is None:
+        feature_columns = featureMatrix.columns.tolist()
+    else:
+        featureMatrix = featureMatrix.reindex(columns=feature_columns, fill_value=0)
     X_sparse = csr_matrix(featureMatrix.fillna(0).values) #feature matrix as sparse matrix
 
-    return X_sparse,y,case_ids
+    return X_sparse,y,case_ids,feature_columns
 
 
 

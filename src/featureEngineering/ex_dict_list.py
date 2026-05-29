@@ -1,6 +1,7 @@
 """
 Example rule lists for outcome() input.
 Based on actual columns in uploaded BPI 2013 event log.
+This list is only there for syntax support. It is not guaranteed that all these rules will create a functional classifier due to data leakage risks
 """
 
 # -------------------------
