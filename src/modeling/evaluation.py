@@ -205,6 +205,45 @@ def save_roc_curve(
     return output_path
 
 
+def save_roc_curves(model_scores, y_true, output_path):
+    """
+    Save ROC curves for multiple models in one plot.
+
+    Args:
+        model_scores: Dictionary mapping model names to predicted probabilities.
+        y_true: True binary labels.
+        output_path: Path where the plot should be saved.
+
+    Returns:
+        Path to the saved figure.
+    """
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+
+    for model_name, y_score in model_scores.items():
+        false_positive_rate, true_positive_rate, _ = roc_curve(y_true, y_score)
+        roc_auc = roc_auc_score(y_true, y_score)
+
+        ax.plot(
+            false_positive_rate,
+            true_positive_rate,
+            label=f"{model_name} (AUC = {roc_auc:.3f})",
+        )
+
+    ax.plot([0, 1], [0, 1], linestyle="--", label="Random classifier")
+    ax.set_xlabel("False Positive Rate")
+    ax.set_ylabel("True Positive Rate")
+    ax.set_title("ROC Curves")
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=300)
+    plt.close(fig)
+
+    return output_path
+
+
 def save_confusion_matrix_plot(
     y_true,
     y_pred,
