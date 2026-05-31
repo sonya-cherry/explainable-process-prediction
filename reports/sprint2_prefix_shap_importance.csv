@@ -1,0 +1,237 @@
+feature,mean_abs_shap
+concept:name=Awaiting Assignment,0.05601337883729533
+event_type=Queued,0.05490764964862753
+concept:name_transition=Awaiting Assignment->In Progress,0.034904445465867746
+day_of_week_min,0.02187937353014046
+month_sum,0.01704890960845635
+month_count,0.016706205827465806
+relative_age_sum,0.01657689986387045
+concept:name_transition=In Progress->Awaiting Assignment,0.016517640572432345
+hour_count,0.014952595560943775
+last_activity=In Progress,0.014197081594050462
+prefix_length_mean,0.01347204017433047
+day_of_week_max,0.012855819031107161
+relative_age_mean,0.012299122558111641
+time_since_last_count,0.012287626830294083
+month_mean,0.011343211895966297
+organization country=pl,0.010947615749932214
+organization involved=Org line C,0.010935189601315462
+first_activity=In Progress,0.009983511752543793
+prefix_length_max,0.009970071589489015
+day_of_week_mean,0.009878031950911529
+is_weekend_count,0.009680568511411972
+month_min,0.009358086611938777
+organization country=in,0.009320076813733275
+time_since_last_sum,0.009132062250778884
+hour_sum,0.009108127648830993
+elapsed_time_count,0.008841393462622957
+month_max,0.008438815719442539
+day_of_week_count,0.008160473971163772
+relative_age_count,0.007362936309451542
+elapsed_time_max,0.006759975025247917
+elapsed_time_sum,0.006441641821897959
+day_of_week_sum,0.0062887481178344855
+organization involved=Org line A2,0.00602986530665365
+first_activity=Awaiting Assignment,0.005745035769833751
+last_activity=Awaiting Assignment,0.005529413271328431
+event_type=Accepted,0.0050585265006828995
+event_type=Completed,0.004570386716819935
+prefix_length_min,0.00456470359900716
+elapsed_time_mean,0.004511289562146264
+elapsed_time_std,0.0044757341176748225
+concept:name=In Progress,0.004458034178070274
+prefix_length_sum,0.004450380971335814
+relative_age_std,0.004050782034375002
+time_since_last_max,0.004025814194900263
+last_activity=Resolved,0.0038233583875961793
+relative_age_max,0.0038105568368329915
+time_since_last_mean,0.003185786147723191
+resource country=Sweden,0.003166539489022624
+hour_mean,0.0029745388164723703
+organization country=se,0.0029742745286427162
+organization country=fr,0.002240916620933052
+hour_std,0.002144716021347659
+hour_min,0.0020831930417256114
+concept:name=Resolved,0.0020213633076569546
+concept:name_transition=In Progress->Resolved,0.0019216826571357222
+resource country=POLAND,0.0017160017071248307
+hour_max,0.0016393446272614702
+resource country=Japan,0.0014098751260924768
+concept:name=Wait,0.0014006634748389552
+prefix_length_count,0.0013559844134491614
+concept:name_transition=In Progress->Assigned,0.0012943462802041954
+organization country=SE,0.0012688233905393076
+concept:name_transition=In Progress->Wait,0.001209651264186308
+organization involved=Org line G4,0.0011847257200409463
+day_of_week_std,0.001134509547034837
+time_since_last_std,0.0011150269862694703
+concept:name_transition=In Progress->Wait - User,0.0011044186495999372
+resource country=Belgium,0.0010797780057442347
+resource country=Brazil,0.0010682771909109523
+concept:name=Wait - User,0.0010351831723099543
+organization country=cn,0.000995285051893332
+resource country=0,0.0009938286398234902
+concept:name=Assigned,0.0009895126906159495
+concept:name_transition=In Progress->In Progress,0.0009487626592151842
+resource country=USA,0.0009432574131474334
+resource country=China,0.0009393829174842015
+concept:name_transition=Assigned->In Progress,0.0009190040630086905
+organization involved=Other,0.0008814464507081719
+concept:name_transition=In Progress->Wait - Implementation,0.0008639996057193466
+last_activity=Wait - User,0.0007677263347923643
+concept:name=Wait - Implementation,0.0007228397385821416
+resource country=INDIA,0.0006949064105529948
+concept:name_transition=Awaiting Assignment->Awaiting Assignment,0.0006290913477437672
+organization involved=Org line B,0.000596050912968446
+last_activity=Wait,0.0005731401517609892
+organization country=be,0.0005296467475456152
+concept:name_transition=Wait - Implementation->Assigned,0.0005285210420788721
+concept:name_transition=Wait - User->In Progress,0.000518436677841727
+organization country=us,0.00047526802072990997
+concept:name=In Call,0.00045838711588040785
+concept:name_transition=In Progress->In Call,0.0003818193509828606
+concept:name_transition=Wait - User->Awaiting Assignment,0.0003047318389264161
+concept:name_transition=Wait->In Progress,0.0002759726675099646
+resource country=France,0.00026250924005244165
+organization involved=Org line V2,0.00022739640206327944
+is_weekend_max,0.0001924996606336858
+organization country=ca,0.00018810145168659037
+concept:name_transition=In Call->In Progress,0.0001708044820312541
+last_activity=Assigned,0.00014505003145908943
+is_weekend_mean,0.0001412980150055048
+is_weekend_sum,0.00012209490626282352
+organization country=br,0.00011932227697775016
+last_activity=Wait - Implementation,9.519919221220804e-05
+organization country=kr,9.314489065638426e-05
+is_weekend_min,8.348478931450422e-05
+organization country=nl,8.096370759177312e-05
+concept:name_transition=Wait - Implementation->In Progress,7.628627862448452e-05
+concept:name_transition=Wait->Wait,6.477972179930403e-05
+concept:name_transition=Wait - Implementation->Wait - Implementation,6.343349986033905e-05
+concept:name_transition=Wait->Wait - User,6.285670136256738e-05
+concept:name=Wait - Vendor,6.0511022445092636e-05
+concept:name_transition=Wait - User->Wait - User,5.4367978087902225e-05
+month_std,4.991258268434785e-05
+organization country=my,4.3337232487025605e-05
+organization country=0,3.928353177255685e-05
+concept:name_transition=Wait - User->Resolved,3.920803021007047e-05
+concept:name_transition=In Progress->Wait - Vendor,3.8680600160943657e-05
+resource country=RUSSIAN FEDERATION,3.751649706474511e-05
+organization involved=Org line V11,3.702724681357034e-05
+resource country=Korea,3.382801299357477e-05
+organization country=ru,3.2941864739031854e-05
+concept:name_transition=Wait - User->Wait,3.166959470488171e-05
+resource country=Canada,2.9951120490712282e-05
+last_activity=In Call,2.8785170680638212e-05
+organization involved=Org line V5,2.8409874479586568e-05
+organization involved=Org line H,2.4477128274864824e-05
+concept:name_transition=Wait->Awaiting Assignment,2.3521091501657204e-05
+organization country=th,1.995252054953762e-05
+last_activity=Wait - Vendor,1.9477865982462836e-05
+resource country=MALAYSIA,1.7965286102952722e-05
+resource country=THAILAND,1.7817209564375228e-05
+concept:name_transition=Resolved->In Progress,1.7455431847146318e-05
+organization country=au,1.688897390273242e-05
+concept:name_transition=Wait - User->Assigned,1.585343019771519e-05
+is_weekend_std,1.297778751461943e-05
+first_activity=Wait - User,1.0974132849910641e-05
+resource country=Australia,9.61892800933879e-06
+organization involved=Org line V7n,8.293069987830652e-06
+organization country=jp,7.27038321734313e-06
+resource country=Czech Republic,6.128243279713022e-06
+concept:name_transition=In Progress->Wait - Customer,4.5309163064929365e-06
+organization involved=Org line G2,3.6978256180258573e-06
+organization country=gb,3.553022789195561e-06
+concept:name_transition=Wait - Vendor->In Progress,2.8410694925118883e-06
+concept:name_transition=Wait->Resolved,2.3554428268917983e-06
+concept:name_transition=Wait - Vendor->Wait - Vendor,1.8883687538441662e-06
+organization involved=Org line F,1.7999841988395007e-06
+organization involved=Org line G1,1.3960289413705804e-06
+resource country=Chile,7.407465097346537e-07
+resource country=Singapore,6.858988997611974e-07
+concept:name_transition=Wait - Implementation->Resolved,6.770686524553689e-07
+organization involved=Org line V9,4.735187240703375e-07
+organization country=cl,4.6429896454630295e-07
+concept:name=Wait - Customer,2.929262560859757e-07
+concept:name_transition=Wait->Assigned,2.685493127445361e-07
+organization involved=Org line V1,2.3594242770053912e-07
+resource country=Netherlands,1.0094196178491327e-07
+concept:name_transition=Closed->In Progress,8.742063918845142e-08
+resource country=Argentina,3.6027206699523644e-08
+resource country=Italy,3.489560637728356e-08
+concept:name=Closed,7.3551374209588e-17
+organization involved=Org line G3,1.3438724838599137e-18
+organization involved=Org line D,7.9816288669393745e-19
+concept:name_transition=Wait - Implementation->Awaiting Assignment,4.393558204605448e-19
+concept:name_transition=Wait - Customer->Wait - User,4.1161699659435167e-19
+concept:name_transition=Wait->Wait - Implementation,3.7999069377687746e-19
+concept:name_transition=Wait - Customer->Wait - Vendor,3.6916894664842726e-19
+resource country=United Kingdom,2.3337589856681373e-19
+organization involved=Org line V10,2.2554400419465897e-19
+organization involved=Org line I,2.0174318472391097e-19
+resource country=Germany,1.717713109910571e-19
+concept:name_transition=Wait - Customer->Awaiting Assignment,1.5102129746020552e-19
+concept:name_transition=Resolved->Closed,9.263598637994529e-20
+organization involved=Org line V7,8.485412656503126e-20
+concept:name_transition=Wait->Wait - Vendor,8.09100213874413e-20
+first_activity=Assigned,7.454039130414068e-20
+organization involved=Org line V,7.450105120576595e-20
+last_activity=Closed,6.736933595315773e-20
+last_activity=Wait - Customer,6.729827031049188e-20
+concept:name_transition=Wait - Vendor->Awaiting Assignment,6.724668466641612e-20
+concept:name=Unmatched,6.287486795777373e-20
+concept:name_transition=In Call->In Call,5.480806137149506e-20
+concept:name_transition=Wait - Implementation->Wait - User,4.5191225580951013e-20
+concept:name_transition=Wait - Vendor->Assigned,3.703872316475799e-20
+concept:name_transition=Wait - Customer->In Progress,3.418334085108446e-20
+organization country=de,2.659148938067815e-20
+concept:name_transition=Wait - Vendor->Resolved,2.0930602715911765e-20
+organization involved=Org line V8,1.919517695144725e-20
+resource country=Spain,1.8158135763505245e-20
+concept:name_transition=Wait - Vendor->Wait - User,1.3502088049500896e-20
+concept:name_transition=Wait - Implementation->Wait - Vendor,1.2807619734839214e-20
+concept:name_transition=Resolved->Awaiting Assignment,3.3182877044911846e-21
+concept:name_transition=Closed->Closed,2.7893507738066744e-21
+last_activity=Unmatched,1.6527539605853738e-21
+concept:name_transition=Closed->Awaiting Assignment,1.6046223765061525e-21
+concept:name_transition=Wait - Customer->Resolved,1.299785941767672e-21
+resource country=Denmark,0.0
+resource country=Romania,0.0
+resource country=INDONESIA,0.0
+first_activity=Wait - Vendor,0.0
+resource country=South Africa,0.0
+resource country=Turkey,0.0
+first_activity=Wait,0.0
+resource country=Austria,0.0
+relative_age_min,0.0
+first_activity=Resolved,0.0
+concept:name_transition=Wait - Customer->Wait,0.0
+organization country=tr,0.0
+concept:name_transition=Wait->Wait - Customer,0.0
+concept:name_transition=Wait - Implementation->Wait,0.0
+concept:name_transition=Wait - Implementation->Wait - Customer,0.0
+concept:name_transition=Wait - Customer->Assigned,0.0
+concept:name_transition=Unmatched->In Progress,0.0
+concept:name_transition=Resolved->Unmatched,0.0
+concept:name_transition=Resolved->Resolved,0.0
+concept:name_transition=Wait - User->Wait - Customer,0.0
+concept:name_transition=Wait - User->Wait - Implementation,0.0
+concept:name_transition=Wait - User->Wait - Vendor,0.0
+concept:name_transition=Wait - Vendor->Wait,0.0
+concept:name_transition=Wait - Vendor->Wait - Customer,0.0
+concept:name_transition=Wait - Vendor->Wait - Implementation,0.0
+prefix_length_std,0.0
+organization involved=Org line E,0.0
+concept:name_transition=Awaiting Assignment->Wait - User,0.0
+concept:name_transition=Awaiting Assignment->Wait,0.0
+concept:name_transition=Awaiting Assignment->Resolved,0.0
+elapsed_time_min,0.0
+concept:name_transition=Awaiting Assignment->Assigned,0.0
+concept:name_transition=Assigned->Wait - User,0.0
+concept:name_transition=Assigned->Awaiting Assignment,0.0
+concept:name_transition=Assigned->Assigned,0.0
+concept:name_transition=Wait - Customer->Wait - Customer,0.0
+time_since_last_min,0.0
+event_type=Unmatched,0.0
+organization involved=Org line V3,0.0
+concept:name_transition=Resolved->Assigned,0.0

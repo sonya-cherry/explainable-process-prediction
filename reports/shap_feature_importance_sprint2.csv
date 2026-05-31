@@ -1,0 +1,122 @@
+feature,mean_abs_shap
+month_std,0.04109678079217889
+day_of_week_max,0.03910994995593533
+day_of_week_std,0.037303419297093646
+month_min,0.03164298708307478
+month_mean,0.028887613334431156
+concept:name=Completed,0.023069862231281137
+resource country=0,0.019678263795136618
+hour_count,0.018255243489362437
+day_of_week_mean,0.017795392495004298
+concept:name_transition=Completed->Completed,0.017679458087966816
+hour_min,0.017372996817471655
+hour_std,0.017034425363937896
+day_of_week_count,0.015814243565592204
+last_activity=Completed,0.012840292341897649
+day_of_week_sum,0.012711639962029146
+resource country=Sweden,0.00952857563890676
+hour_mean,0.009373280481561115
+month_count,0.009336791660185147
+hour_max,0.008917256606227362
+month_sum,0.008799969280161328
+is_weekend_count,0.008506723329518347
+organization country=se,0.00733865429487569
+day_of_week_min,0.0061856693106367815
+hour_sum,0.005481216566066495
+concept:name_transition=Queued->Accepted,0.004954452351268675
+concept:name=Queued,0.0046389012613818155
+concept:name=Accepted,0.004304456349775863
+is_weekend_sum,0.00406997780857319
+is_weekend_std,0.003960963777229989
+first_activity=Accepted,0.003955238669863094
+concept:name_transition=Accepted->Queued,0.0038541758250844574
+is_weekend_max,0.0037652389978050324
+organization involved=Org line C,0.0034757284356652972
+is_weekend_mean,0.0034044593752405035
+resource country=Brazil,0.0024125168850185627
+concept:name_transition=Accepted->Accepted,0.0024037103752895177
+organization involved=Org line B,0.002297173256078918
+organization country=br,0.0019000923838670776
+organization involved=Org line A2,0.001399504395803085
+resource country=Belgium,0.0013662152206202758
+organization country=be,0.0009526264633938078
+organization country=pl,0.0007435678349639439
+organization involved=Org line G4,0.0006991411252740395
+first_activity=Queued,0.0005583943936905612
+resource country=POLAND,0.0004168985449635308
+resource country=INDIA,0.00034522004868635153
+organization country=fr,0.00028931532281214155
+organization country=us,0.0002633120135668224
+resource country=France,0.00024364227546236074
+organization involved=Org line G1,0.00020068909939677956
+resource country=USA,0.00019671965984372757
+organization involved=Other,0.00018887892628232023
+organization involved=Org line V2,0.00014586177686092474
+organization country=in,0.00014548552745105684
+concept:name_transition=Queued->Completed,0.00014385792978373376
+concept:name_transition=Accepted->Completed,9.90124936102904e-05
+month_max,9.683421043488478e-05
+concept:name_transition=Queued->Queued,9.526574630153282e-05
+resource country=Netherlands,9.38861252773652e-05
+organization country=au,9.33327626134609e-05
+organization country=SE,7.133098801485908e-05
+organization country=kr,6.575389655766633e-05
+resource country=China,6.243296718005902e-05
+resource country=Korea,5.959528450034199e-05
+organization country=cn,5.792408005825545e-05
+concept:name_transition=Completed->Accepted,4.7925367332262785e-05
+organization involved=Org line V7n,4.514212620849687e-05
+organization involved=Org line V8,4.3621744480056644e-05
+organization country=ca,3.4595092931948286e-05
+organization involved=Org line V11,2.935058789600293e-05
+resource country=Canada,2.3585678491484718e-05
+resource country=United Kingdom,2.013593777953376e-05
+concept:name_transition=Completed->Queued,1.7997826420971902e-05
+organization country=my,1.1746514748394624e-05
+organization involved=Org line E,1.1398938226704071e-05
+organization involved=Org line G2,1.02684595922295e-05
+resource country=Japan,7.105288348303622e-06
+resource country=Denmark,6.178627071126083e-06
+resource country=THAILAND,5.2716274694659275e-06
+organization country=gb,3.2839229931282936e-06
+organization country=0,3.215582084151711e-06
+resource country=Germany,2.5626544907162976e-06
+organization country=ru,1.6440504262570019e-06
+resource country=South Africa,1.627477920686856e-06
+first_activity=Completed,1.4105485195537427e-06
+resource country=Australia,1.178051332792014e-06
+last_activity=Accepted,1.0427262221748492e-06
+organization country=th,7.419059293062168e-07
+resource country=Chile,5.909410744517467e-07
+organization country=nl,1.3016759001816317e-07
+resource country=MALAYSIA,1.6060026247441218e-08
+is_weekend_min,0.0
+resource country=Czech Republic,0.0
+resource country=Austria,0.0
+resource country=INDONESIA,0.0
+concept:name_transition=Unmatched->Accepted,0.0
+concept:name_transition=Completed->Unmatched,0.0
+resource country=RUSSIAN FEDERATION,0.0
+resource country=Romania,0.0
+resource country=Singapore,0.0
+resource country=Spain,0.0
+resource country=Turkey,0.0
+organization country=cl,0.0
+organization country=de,0.0
+organization country=jp,0.0
+organization country=tr,0.0
+organization involved=Org line D,0.0
+organization involved=Org line F,0.0
+resource country=Argentina,0.0
+organization involved=Org line G3,0.0
+organization involved=Org line H,0.0
+organization involved=Org line I,0.0
+organization involved=Org line V,0.0
+organization involved=Org line V1,0.0
+resource country=Italy,0.0
+organization involved=Org line V3,0.0
+organization involved=Org line V5,0.0
+organization involved=Org line V7,0.0
+organization involved=Org line V9,0.0
+concept:name=Unmatched,0.0
+organization involved=Org line V10,0.0
