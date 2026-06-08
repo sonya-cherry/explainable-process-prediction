@@ -1,0 +1,9 @@
+pandas
+numpy
+matplotlib
+scikit-learn>=1.8,<1.9
+scipy
+shap
+pytest
+joblib
+pm4py
