@@ -76,7 +76,7 @@ def Encode(df: pd.DataFrame, feature_columns = None) -> tuple[csr_matrix, pd.Ser
         if col in {"case:concept:name", "outcome", "time:timestamp", "lifecycle:transition"}:
             continue
 
-        if ((pd.api.types.is_string_dtype(df[col]) or pd.api.types.is_categorical_dtype(df[col])) and df[col].nunique() < 100):
+        if ((pd.api.types.is_string_dtype(df[col]) or isinstance(df[col].dtype, pd.CategoricalDtype)) and df[col].nunique() < 100):
             # -------------------------
             # STANDARD COUNT ENCODING
             # -------------------------
