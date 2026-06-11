@@ -264,7 +264,7 @@ SHAP contributors, and the optional local plot path.
 The final Sprint 3 demonstration is:
 
 ```text
-notebooks/7-sprint3-final-pipeline.ipynb
+notebooks/7-sprint3FinalPipeline.ipynb
 ```
 
 It can be run from top to bottom independently. The notebook calls the same
