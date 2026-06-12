@@ -93,67 +93,50 @@ Run the full automated test suite from the repository root:
 .venv/bin/pytest tests/ -v
 ```
 
-Or run a single file:
+Run a single file:
 
 ```bash
-pytest
-```
-
-Sprint 3 adds coverage for:
-
-- prediction output metadata and validation,
-- ROC AUC computation,
-- confusion matrix and ROC figure creation,
-- model comparison table and plot creation,
-- SHAP explanation generation on a small Random Forest,
-- the prototype prediction-and-explanation wrapper,
-- the complete training and evaluation pipeline on a synthetic event log.
-
-## End-to-End Pipeline
-
-The final workflow is implemented in reusable modules rather than notebook-only
-cells:
-
-- `src/pipeline/training_pipeline.py` loads the event log, creates the
-  final-activity outcome, performs a temporal case split, generates prefixes,
-  aligns feature matrices, removes configured leakage-related features, trains
-  the models, and selects the Random Forest on validation F1.
-- `src/pipeline/evaluation_pipeline.py` evaluates all trained models on the
-  held-out test set and generates prediction tables, performance plots, and
-  global and local SHAP explanations.
-
-The positive class consists of original cases whose final lifecycle transition
-is `Closed` or `Resolved`. Original cases are split chronologically before
-prefix generation, so prefixes from the same case cannot occur in multiple
-splits.
-
-Run the complete pipeline from the repository root:
-
-```bash
-python scripts/run_pipeline.py \
-    --data data/raw/BPI_Challenge_2013_incidents/BPI_Challenge_2013_incidents.xes \
-    --output-dir outputs
-```
-
-For a faster run without SHAP, add `--no-shap`.
-
-Generated CSV reports are written to `outputs/reports/`, and figures are written
-to `outputs/figures/`.
 .venv/bin/pytest tests/test_evaluation.py -v
 .venv/bin/pytest tests/test_explainability.py -v
 ```
 
 The suite contains 23 tests across 7 files:
 
-| File | What is covered |
-|---|---|
-| `test_baseline.py` | Majority baseline always predicts the most frequent class |
-| `test_evaluation.py` | `compute_basic_metrics`, `compute_metrics_with_roc_auc`, `evaluate_model` (direct and without `predict_proba`), `save_confusion_matrix_plot`, `save_roc_curve`, `save_roc_curves` (multi-model), `build_evaluation_table`, `save_model_comparison_plot` |
-| `test_explainability.py` | `prepare_shap_dataframe` (feature names, sampling), `save_global_shap_summary`, `save_global_shap_importance_table`, `save_global_shap_importance_plot`, `save_local_shap_bar_plot` (normal and out-of-bounds index), `select_local_explanation_indices` (mixed predictions and all-correct edge case) |
-| `test_model_selection.py` | `select_best_random_forest` returns the best model, its parameters, and a results table |
-| `test_pipeline.py` | Full training + evaluation pipeline on a synthetic log (SHAP disabled for speed) |
-| `test_prediction_output.py` | `create_prediction_output` metadata, probability validation, `save_model_prediction_output`, `load_prediction_output` round-trip |
-| `test_prototype_predict_explain.py` | `predict_and_explain_case` returns prediction, probability, and top features; rejects multi-row input |
+**`test_baseline.py`**
+- Majority baseline always predicts the most frequent training class.
+
+**`test_evaluation.py`**
+- Basic metric computation (`accuracy`, `f1`, `precision`, `recall`).
+- ROC AUC computation from predicted scores.
+- `evaluate_model` called directly; fallback when a model has no `predict_proba`.
+- Multi-model ROC curve figure (`save_roc_curves`).
+- Confusion matrix and single-model ROC figure creation.
+- Model comparison table and bar chart creation.
+
+**`test_explainability.py`**
+- `prepare_shap_dataframe` preserves feature names from a numpy array.
+- `prepare_shap_dataframe` truncates rows when `max_samples` is set.
+- Global SHAP summary plot and importance table creation.
+- Global SHAP importance bar chart creation (`save_global_shap_importance_plot`).
+- Local SHAP bar plot creation for a single row.
+- `save_local_shap_bar_plot` raises `IndexError` for an out-of-bounds row index.
+- `select_local_explanation_indices` finds all three case types with mixed predictions.
+- `select_local_explanation_indices` returns `None` for misclassified when all predictions are correct.
+
+**`test_model_selection.py`**
+- `select_best_random_forest` returns a fitted model, the best parameter dict, and a results table.
+
+**`test_pipeline.py`**
+- Full training and evaluation pipeline run on a synthetic event log (SHAP disabled for speed).
+
+**`test_prediction_output.py`**
+- `create_prediction_output` includes all required metadata columns.
+- Invalid probabilities outside `[0, 1]` are rejected.
+- `save_model_prediction_output` writes a valid CSV; `load_prediction_output` reads it back.
+
+**`test_prototype_predict_explain.py`**
+- `predict_and_explain_case` returns a prediction, a probability, and the requested number of top features.
+- Multi-row input raises `ValueError`.
 
 ## Current Pipeline
 
