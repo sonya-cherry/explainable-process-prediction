@@ -1,11 +1,12 @@
-
-
 """
 Tests for evaluation metric utilities.
 """
 
 from pathlib import Path
 import sys
+
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(PROJECT_ROOT))
@@ -14,9 +15,11 @@ from src.modeling.evaluation import (
     build_evaluation_table,
     compute_basic_metrics,
     compute_metrics_with_roc_auc,
+    evaluate_model,
     save_confusion_matrix_plot,
     save_model_comparison_plot,
     save_roc_curve,
+    save_roc_curves,
 )
 
 
@@ -104,3 +107,50 @@ def test_build_evaluation_table_and_comparison_plot(tmp_path):
         "roc_auc",
     ]
     assert plot_path.exists()
+
+
+def test_evaluate_model_returns_all_metric_keys():
+    """evaluate_model should return a dict with the model name and all metric keys."""
+    X = np.array([[0.0, 1.0], [1.0, 0.0], [2.0, 1.0], [3.0, 0.0]])
+    y = [0, 0, 1, 1]
+    model = RandomForestClassifier(n_estimators=10, random_state=42).fit(X, y)
+
+    result = evaluate_model(model, X, y, "rf_model")
+
+    assert result["model"] == "rf_model"
+    assert set(result.keys()) == {"model", "accuracy", "f1", "precision", "recall", "roc_auc"}
+    assert 0.0 <= result["accuracy"] <= 1.0
+    assert 0.0 <= result["roc_auc"] <= 1.0
+
+
+def test_evaluate_model_falls_back_to_predictions_without_predict_proba():
+    """evaluate_model should use predictions as the score when predict_proba is absent."""
+    class _ThresholdClassifier:
+        def predict(self, X):
+            return np.array([1 if row[0] > 1.5 else 0 for row in X])
+
+    X = np.array([[0.0], [1.0], [2.0], [3.0]])
+    y = [0, 0, 1, 1]
+    model = _ThresholdClassifier()
+
+    result = evaluate_model(model, X, y, "threshold_model")
+
+    assert result["accuracy"] == 1.0
+    assert result["roc_auc"] == 1.0
+
+
+def test_save_roc_curves_creates_file_for_multiple_models(tmp_path):
+    """save_roc_curves should produce one figure containing curves for all given models."""
+    y_true = [0, 0, 1, 1]
+    model_scores = {
+        "Model A": np.array([0.1, 0.2, 0.8, 0.9]),
+        "Model B": np.array([0.2, 0.3, 0.7, 0.85]),
+    }
+
+    output_path = save_roc_curves(
+        model_scores=model_scores,
+        y_true=y_true,
+        output_path=tmp_path / "roc_curves.png",
+    )
+
+    assert output_path.exists()
