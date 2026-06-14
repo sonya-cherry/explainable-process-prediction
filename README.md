@@ -54,7 +54,8 @@ notebooks or modules instead of editing those files manually.
 
 The project uses the BPI Challenge 2013 incidents event log. Each event belongs
 to one incident case and records an activity, lifecycle transition, timestamp,
-and additional case or event attributes.
+and additional case or event attributes.The log can be found to download here:
+ https://data.4tu.nl/articles/_/12693914/1
 
 The main columns used by the pipeline are:
 

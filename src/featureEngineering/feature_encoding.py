@@ -5,38 +5,15 @@ from scipy.sparse import csr_matrix
 
 '''
 Feature engineering step to encode the dataframe into a feature matrix. For the sake of the tracer bullet being created in sprint 1, this version will be implemented through a variation of one hot encoding.
-WHAT THIS VERSION CAN DO:
-simplify each trace into a single row
-assert whether any categorical trait is contained in the trace
-assert for each numerical trait certain values (sum, mean, min, max, std, count)
-
-WHAT THIS VERSION CANT DO:
-recognise duplicate activities
-recognise activity ordering
-recognise looping structures / causalities
-temporal features left out for the tracer bullet, since the outcome definition is wholly based on time.
 
 
 INPUT: as input, a dataframe is taken with an extra 'outcome' column. A boolean input for prefix generation will be added, but the prefix generation itself not implemented for this tracer further than a 
 docking spot in the code. 
 
-OUTPUT: Sparse matrix, outcome label series, and caseId series, as a tuple. 
-
+OUTPUT: Sparse matrix, outcome label series, caseId series, column names, as a tuple. 
 
 '''
 
-
-
-
-"""
-VERSION 2:
-SHOULD SOLVE:
-1) ACTIVITY DIRECTLY FOLLOWS ORDERING
-2) ACTIVITY DUPLICATES
-3) RECOGNISE LOOPS
-4) TEMPORAL FEATURES
-5) PREVENTS CATEGORICAL EXPLOSION BY CHECKING NUMBER OF DISTINCT VALUES
-"""
 def Encode(df: pd.DataFrame, feature_columns = None) -> tuple[csr_matrix, pd.Series, pd.Series, list]:
     df = df.copy()
     required = {"case:concept:name", "outcome"}
