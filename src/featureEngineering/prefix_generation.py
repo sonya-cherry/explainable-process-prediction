@@ -29,4 +29,7 @@ def generate_prefix(df: pd.DataFrame, min_prefix: int = 1) -> pd.DataFrame:
 
             prefixes.append(prefix)
 
+    if not prefixes:
+        return pd.DataFrame(columns=df.columns)
+
     return pd.concat(prefixes, ignore_index=True)

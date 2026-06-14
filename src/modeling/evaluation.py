@@ -113,6 +113,7 @@ def save_model_comparison_plot(
     evaluation_table: pd.DataFrame,
     output_path: Union[str, Path] = "figures/model_comparison_sprint2.png",
     metrics: Optional[list[str]] = None,
+    title: str = "Model comparison"
 ) -> Path:
     """
     Create and save a bar chart comparing selected metrics across models.
@@ -146,7 +147,7 @@ def save_model_comparison_plot(
     fig, ax = plt.subplots(figsize=(8, 5))
     plot_df.plot(kind="bar", ax=ax)
 
-    ax.set_title("Model Comparison - Sprint 2")
+    ax.set_title(title)
     ax.set_xlabel("Model")
     ax.set_ylabel("Metric Value")
     ax.set_ylim(0, 1)
