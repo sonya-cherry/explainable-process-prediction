@@ -9,7 +9,7 @@ Run all:   pytest test_outcome.py -v
 import pandas as pd
 import pytest
 
-from src.featureEngineering.outcome_labelling import outcome
+from src.feature_engineering.outcome_labelling import outcome
 
 
 # ===========================================================================

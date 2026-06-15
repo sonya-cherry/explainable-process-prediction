@@ -11,8 +11,8 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 
-from src.dataExtraction import extract
-from src.dataExtraction.extract import (
+from src.data_extraction import extract
+from src.data_extraction.extract import (
     _import_csv,
     _import_xes,
     _postprocess,
