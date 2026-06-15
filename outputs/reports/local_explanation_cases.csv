@@ -1,4 +1,0 @@
-explanation_type,row_index,case_id,y_true,prediction,probability,figure_path
-correct_positive,0,1-738190601_prefix_1,1,1,0.985416263677035,/Users/alex/Documents/RWTH/4Semester/spp/project/explainable-process-prediction/outputs/figures/explanations/shap_local_correct_positive.png
-correct_negative,297,1-739800638_prefix_1,0,0,0.19072125991514224,/Users/alex/Documents/RWTH/4Semester/spp/project/explainable-process-prediction/outputs/figures/explanations/shap_local_correct_negative.png
-misclassified,153,1-739732277_prefix_1,1,0,0.2884613761298996,/Users/alex/Documents/RWTH/4Semester/spp/project/explainable-process-prediction/outputs/figures/explanations/shap_local_misclassified.png
