@@ -1,11 +1,3 @@
-from pathlib import Path
-from typing import Any, Optional, Union
-
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import shap
-
 """
 SHAP explanation utilities for process outcome prediction models.
 
@@ -16,7 +8,31 @@ Recommended input for this project:
 - model: trained Random Forest or Gradient Boosting model
 - X: no-leakage feature matrix, for example X_test_no_leakage
 - feature_columns: matching feature names, for example feature_columns_no_leakage
+
+``shap`` is a heavy optional dependency. It is imported lazily inside the
+functions that need it, so importing this module and using the lightweight
+helpers (for example ``prepare_shap_dataframe``) does not load it.
 """
+
+from pathlib import Path
+from typing import Any, Optional, Union
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+
+def _require_shap():
+    """Import and return the ``shap`` library, with a clear error if missing."""
+    try:
+        import shap
+    except ImportError as error:  # pragma: no cover - exercised only without shap
+        raise ImportError(
+            "The 'shap' package is required for explanation features. "
+            "Install it with 'pip install shap' or run the pipeline with "
+            "--no-shap to skip explanations."
+        ) from error
+    return shap
 
 
 def prepare_shap_dataframe(
@@ -106,6 +122,8 @@ def save_global_shap_summary(
     Returns:
         Path to the saved figure.
     """
+    shap = _require_shap()
+
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -153,6 +171,8 @@ def save_global_shap_importance_table(
     Returns:
         DataFrame sorted by mean absolute SHAP value.
     """
+    shap = _require_shap()
+
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -202,6 +222,8 @@ def save_global_shap_importance_plot(
     Returns:
         Path to the saved figure.
     """
+    shap = _require_shap()
+
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -312,6 +334,8 @@ def save_local_shap_bar_plot(
     Returns:
         Path to the saved figure.
     """
+    shap = _require_shap()
+
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 

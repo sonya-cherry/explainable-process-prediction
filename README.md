@@ -11,8 +11,8 @@ outcome is derived from the last lifecycle transition of each original case.
 ## Project Structure
 
 ```text
-src/dataExtraction/        Event log loading helpers
-src/featureEngineering/    Outcome labels, feature encoding, and prefix generation
+src/data_extraction/        Event log loading helpers
+src/feature_engineering/    Outcome labels, feature encoding, and prefix generation
 src/modeling/              Baseline, model training, selection, and evaluation
 src/pipeline/              Reusable training and evaluation pipelines
 scripts/                   Command-line entry point for the complete pipeline
@@ -40,15 +40,26 @@ Install the project dependencies:
 python -m pip install -r requirements.txt
 ```
 
-Place the BPI Challenge 2013 incidents event log under:
+Download the BPI Challenge 2013 incidents event log. The script fetches the log
+from its public 4TU.ResearchData record, verifies the checksum, and unpacks it
+into `data/raw/BPI_Challenge_2013_incidents/`:
 
-```text
-data/raw/BPI_Challenge_2013_incidents/
+```bash
+python scripts/download_data.py
 ```
 
-The repository currently contains local generated reports, figures, and model
-artifacts from earlier sprints. For a clean run, regenerate outputs from the
-notebooks or modules instead of editing those files manually.
+The download uses only the Python standard library and is idempotent: it skips
+files that already exist (use `--force` to re-download).
+
+Generated reports, figures, and model artifacts are not tracked in version
+control. They are recreated when you run the pipeline or the notebooks, so a
+fresh checkout stays clean.
+
+### SHAP is optional
+
+`shap` powers the explanation plots and is the only heavy runtime dependency.
+It is imported lazily, so the rest of the pipeline runs without it. To skip
+explanations entirely, pass `--no-shap` to the command-line entry point.
 
 ## Dataset
 
@@ -242,12 +253,12 @@ The output includes `case_id`, `y_true`, `prediction`, `probability`, `model`,
 
 ## Prefix-Level Prediction
 
-Prefix generation is implemented in `src/featureEngineering/prefix_generation.py`.
+Prefix generation is implemented in `src/feature_engineering/prefix_generation.py`.
 The function removes the full-length trace from the generated prefix set to
 reduce direct target leakage.
 
 ```python
-from src.featureEngineering.prefix_generation import generate_prefix
+from src.feature_engineering.prefix_generation import generate_prefix
 
 train_prefix_df = generate_prefix(train_df)
 val_prefix_df = generate_prefix(val_df)

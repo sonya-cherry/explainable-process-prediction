@@ -23,9 +23,9 @@ from typing import Any, Sequence
 import pandas as pd
 from scipy.sparse import csr_matrix
 
-from src.dataExtraction.extract import import_data, split
-from src.featureEngineering.feature_encoding import Encode
-from src.featureEngineering.prefix_generation import generate_prefix
+from src.data_extraction.extract import import_data, split
+from src.feature_engineering.feature_encoding import Encode
+from src.feature_engineering.prefix_generation import generate_prefix
 from src.modeling.baseline import train_majority_baseline
 from src.modeling.evaluation import build_evaluation_table, evaluate_model
 from src.modeling.model_selection import select_best_random_forest
