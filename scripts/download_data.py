@@ -21,10 +21,26 @@ import argparse
 import gzip
 import hashlib
 import shutil
+import ssl
 import sys
 import tempfile
 import urllib.request
 from pathlib import Path
+
+
+def _ssl_context() -> ssl.SSLContext:
+    """Return an SSL context with a usable CA bundle.
+
+    The python.org macOS installer ships without system CA certificates, which
+    makes ``urllib`` raise ``CERTIFICATE_VERIFY_FAILED``. Prefer ``certifi``'s
+    bundle when available; otherwise fall back to the system defaults.
+    """
+    try:
+        import certifi
+
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 TARGET_DIR = PROJECT_ROOT / "data" / "raw" / "BPI_Challenge_2013_incidents"
@@ -69,7 +85,9 @@ def _download(url: str, destination: Path) -> None:
     ) as tmp:
         tmp_path = Path(tmp.name)
     try:
-        with urllib.request.urlopen(url) as response, tmp_path.open("wb") as out:
+        with urllib.request.urlopen(
+            url, context=_ssl_context()
+        ) as response, tmp_path.open("wb") as out:
             shutil.copyfileobj(response, out)
         tmp_path.replace(destination)
     finally:
