@@ -12,14 +12,13 @@ The project implements an explainable outcome prediction pipeline for process ev
 
 The main project question is:
 
-**Can we predict the outcome and explain predictions in an understandable
-way?**
+**Can we predict the outcome of an incident case and explain the prediction in an understandable way?**
 
 The task is binary classification. A case is labelled as positive if its final lifecycle transition is `Closed` or `Resolved`. All other final lifecycle transitions are labelled as negative.
 
 The project focuses on prefix-level prediction. One row in the supervised dataset represents one prefix of a case. For example, a prefix of length 3 contains only the first three events of the case. The label is still the final outcome of the complete case, but the features only use information available up to the current prefix.
 
-This setting is relevant for predictive process monitoring because it simulates prediction for running cases. The model should not use information from future events or from the final state of the case.
+This setting simulates prediction for running cases. Therefore, the model must not use information from future events or from the final state of the case.
 
 The implemented models are:
 
@@ -110,11 +109,17 @@ python scripts/run_pipeline.py \
   --output-dir outputs
 ```
 
-The generated reports and figures are stored in:
+The pipeline writes generated reports and figures to:
 
 ```text
 outputs/reports/
 outputs/figures/
+```
+
+These generated outputs are not treated as source code. The assessment document includes the relevant tables directly, and selected figures are copied to:
+
+```text
+docs/figures/
 ```
 
 The most important generated files are:
@@ -208,9 +213,9 @@ The Random Forest has the best ROC-AUC and PR-AUC. This means that it ranks case
 
 The Logistic Regression model has high precision but low recall for class 1. This means that when it predicts class 1, it is usually correct, but it misses many class-1 prefixes.
 
-![Model comparison](../outputs/figures/model_comparison.png)
+![Model comparison](figures/test_model_comparison.png)
 
-![ROC curves](../outputs/figures/roc_curves.png)
+![ROC curves](figures/test_roc_curves.png)
 
 ### 5.2 Confusion Matrix Interpretation
 
@@ -225,7 +230,7 @@ The Random Forest detects most class-0 prefixes: 898 out of 918 actual class-0 p
 
 This means that the model is sensitive to patterns associated with non-`Closed` and non-`Resolved` outcomes, but it also produces many false alarms. In a real incident-management setting, this behaviour would require threshold tuning. If missing a problematic case is more costly than checking a false alarm, this may still be useful. If false alarms are expensive, the threshold should be adjusted.
 
-![Random Forest confusion matrix](../outputs/figures/confusion_matrix_rf.png)
+![Random Forest confusion matrix](figures/random_forest_confusion_matrix.png)
 
 ### 5.3 Explainability Results
 
@@ -246,9 +251,9 @@ SHAP was used to explain the final Random Forest model. The global SHAP feature 
 
 The most important features mostly describe queueing, assignment, transitions between assignment and progress, and temporal context. This is plausible for an incident-management process because waiting, assignment, and reassignment patterns are related to how incidents move through support teams.
 
-![SHAP feature importance](../outputs/figures/shap_global_importance.png)
+![SHAP feature importance](figures/explanations/shap_importance.png)
 
-![SHAP summary](../outputs/figures/shap_summary.png)
+![SHAP summary](figures/explanations/shap_summary.png)
 
 Local SHAP explanations were generated for three selected examples:
 
@@ -260,7 +265,7 @@ Local SHAP explanations were generated for three selected examples:
 
 The misclassified example is useful because it shows a wrong warning. The true final outcome is positive, but the model predicts class 0. This suggests that the prefix contains patterns that the model associates with non-standard outcomes, even though this specific case eventually ends positively.
 
-![Local SHAP explanation for misclassified case](../outputs/figures/shap_local_misclassified.png)
+![Local SHAP explanation for misclassified case](figures/explanations/shap_local_misclassified.png)
 
 SHAP explanations are useful for inspecting model behaviour, but they should not be interpreted as causal explanations. They show which features contributed to the model prediction, not which features caused the final outcome.
 
@@ -344,7 +349,11 @@ outputs/reports/
 outputs/figures/
 ```
 
-The final assessment uses generated CSV files for tables and generated figures for visual inspection. This avoids manually copying results from notebook output cells.
+Generated outputs are not committed as project source files. The assessment document contains the relevant tables, and the selected figures used in the document are stored under:
+
+```text
+docs/figures/
+```
 
 The project was executed locally in a Python virtual environment. The final test run used:
 
@@ -391,7 +400,7 @@ Future improvements should include threshold tuning, calibration analysis, evalu
 
 The project worked well once the implementation became more modular. Moving logic into reusable pipeline files made the final workflow easier to run and easier to test. The final pipeline separates data loading, labelling, prefix generation, feature encoding, model training, evaluation, and explanation.
 
-The main difficulty was that earlier parts of the project were notebook-driven. This made experimentation fast, but it also created duplicated outputs and made it harder to see which results were final. For the final submission, the generated reports and figures are collected under the `outputs/` folder.
+The main difficulty was that earlier parts of the project were notebook-driven. This made experimentation fast, but it also created duplicated outputs and made it harder to see which results were final. For the final submission, the generated reports and figures were consolidated, and selected figures were copied into `docs/figures/` for the assessment document.
 
 Another difficulty was leakage prevention. Prefix-level prediction can easily become invalid if features use information from the future or if prefixes from the same case are split across train and test sets. The final implementation addresses this by splitting original cases first, generating prefixes inside each split, aligning feature columns from the training set, and removing leakage-prone duration features.
 
