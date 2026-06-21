@@ -212,8 +212,6 @@ __marimo__/
 .DS_Store
 
 # Generated outputs (regenerate via scripts/run_pipeline.py or the notebooks)
-outputs/figures/
-outputs/reports/
 figures/
 reports/
 models/
