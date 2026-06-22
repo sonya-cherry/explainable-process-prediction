@@ -6,6 +6,22 @@
 **Dataset:** BPI Challenge 2013 Incidents  
 **Team:** Oleksandr Smuhliakov, Sofia Vishnevskaia, Benedikt Koop  
 
+## Table of Contents
+
+1. [Project Goal and Prediction Task](#1-project-goal-and-prediction-task)
+2. [Data and Labels](#2-data-and-labels)
+3. [Implementation Summary](#3-implementation-summary)
+4. [Experimental Design](#4-experimental-design)
+5. [Results](#5-results)
+   - [5.1 Model Comparison on the Test Set](#51-model-comparison-on-the-test-set)
+   - [5.2 Confusion Matrix Interpretation](#52-confusion-matrix-interpretation)
+   - [5.3 Explainability Results](#53-explainability-results)
+   - [5.4 Comparison with the Interpretable Model](#54-comparison-with-the-interpretable-model)
+6. [Testing Evidence](#6-testing-evidence)
+7. [Reproducibility and Usability](#7-reproducibility-and-usability)
+8. [Critical Evaluation](#8-critical-evaluation)
+9. [Project Retrospective](#9-project-retrospective)
+
 ## 1. Project Goal and Prediction Task
 
 The project implements an explainable outcome prediction pipeline for process event logs. The goal is to predict the final outcome of an incident case from prefix-level event-log data and to explain the prediction using SHAP.
@@ -398,12 +414,33 @@ Future improvements should include threshold tuning, calibration analysis, evalu
 
 ## 9. Project Retrospective
 
-The project worked well once the implementation became more modular. Moving logic into reusable pipeline files made the final workflow easier to run and easier to test. The final pipeline separates data loading, labelling, prefix generation, feature encoding, model training, evaluation, and explanation.
+This section reviews the project as it was actually carried out, from first exploration of the event log to the final integrated pipeline, and then reflects on what worked and what the team would change.
 
-The main difficulty was that earlier parts of the project were notebook-driven. This made experimentation fast, but it also created duplicated outputs and made it harder to see which results were final. For the final submission, the generated reports and figures were consolidated, and selected figures were copied into `docs/figures/` for the assessment document.
+### Overview of the Work
 
-Another difficulty was leakage prevention. Prefix-level prediction can easily become invalid if features use information from the future or if prefixes from the same case are split across train and test sets. The final implementation addresses this by splitting original cases first, generating prefixes inside each split, aligning feature columns from the training set, and removing leakage-prone duration features.
+The project was developed over three sprints. Each sprint moved the work from separate notebook experiments toward a single reusable pipeline, and the notebooks in the repository still record that progression.
 
-The team learned that evaluation design is as important as model implementation. A model can look good on accuracy while still failing to provide useful discrimination. The project also showed that explainability should not be added only at the end. It is easier to interpret results when explanation requirements are considered during feature engineering and model selection.
+| Phase | Main work | Outcome |
+|---|---|---|
+| Exploration | Loaded the BPI Challenge 2013 incidents log, examined case lengths and lifecycle distributions, and defined the binary `Closed`/`Resolved` outcome | Confirmed the prediction task and the class imbalance |
+| Sprint 1 — Baseline | Built the majority baseline and the first evaluation metrics on completed cases | Established a reference point and showed that accuracy alone is misleading on this log |
+| Sprint 2 — Prefixes and models | Moved to prefix-level prediction, added Logistic Regression and Random Forest, and put the leakage controls in place (case-level temporal split, in-split prefix generation, column alignment) | Produced the supervised prefix dataset and the first comparable model results |
+| Sprint 3 — Explainability and integration | Added SHAP global and local explanations, selected Random Forest hyperparameters on validation, consolidated everything into `src/` modules, the command-line script, and the prototype | Delivered the final reusable pipeline and the explained predictions reported in this document |
 
-In another iteration, the team would define the final outcome earlier, keep all generated outputs in one directory from the beginning, add prefix-length evaluation earlier, and create a cleaner configuration file for all parameters.
+The work was shared across the team, with each member owning one major part of the final system. Benedikt Koop handled data loading, preprocessing, feature engineering, prefix generation, and the aligned model inputs. Sofia Vishnevskaia handled predictive modelling, validation and test evaluation, and pipeline integration into the end-to-end workflow. Oleksandr Smuhliakov handled the structured prediction outputs, the visualizations, the SHAP explanations, and the presentation of results. Testing, code review, documentation, and sprint integration were shared responsibilities.
+
+### What Worked
+
+The project worked best once the implementation moved out of notebooks and into reusable modules under `src/`. Separating data loading, labelling, prefix generation, feature encoding, model training, evaluation, and explanation into distinct components made the final workflow runnable from a single command, testable with small synthetic data, and easy to reproduce. The notebooks were then kept only as a record of exploration and as the final Sprint 3 demonstration, while the pipeline became the source of truth for every number in this document.
+
+Treating leakage as a first-class concern also paid off. Prefix-level prediction becomes invalid if features look ahead to future events or if prefixes from the same case are split across train and test sets. The pipeline addresses both risks directly: original cases are split temporally before any prefix is generated, prefixes are created inside each split, the full trace is excluded so a finished case is never treated as a running one, feature columns are aligned to the training set, and leakage-prone features such as `case_duration` and `relative_age` are dropped before training. Treating the case, rather than the prefix, as the unit of splitting was the key decision, and it was not obvious at the start.
+
+### What Was Difficult
+
+The main difficulty came from the project starting out notebook-driven. Notebooks made early experimentation fast, but they also produced duplicated and overlapping outputs, which made it hard to tell which figures and tables were final. Consolidating the reports under `outputs/reports/` and the figures under `outputs/figures/`, and copying only the selected figures into `docs/figures/`, removed that ambiguity, but the cleanup would have been smaller if a single output location had been used from the beginning.
+
+Evaluation design turned out to matter as much as the models themselves. Because the positive class is the majority, the majority baseline reaches 0.831 accuracy and a 0.908 class-1 F1-score without learning anything, so the team had to rely on ROC-AUC and PR-AUC to show that the Random Forest actually discriminates between cases. The confusion matrix made the same point from the other side: high overall accuracy still hid a large number of false alarms that only threshold tuning would address. Explainability was likewise more useful once it was considered during feature engineering and model selection rather than added at the end, since the SHAP results are only interpretable because the features carry process meaning such as queueing, assignment, and reassignment.
+
+### What the Team Would Change
+
+In another iteration, the team would fix the outcome definition and the single output directory before writing any modelling code, add per-prefix-length evaluation from the start instead of leaving it as a known gap, move the split ratios, prefix settings, removed-feature list, and model hyperparameters into one configuration file rather than spreading them across modules, and build the leakage checks in as explicit tests early rather than discovering the constraints during integration.
