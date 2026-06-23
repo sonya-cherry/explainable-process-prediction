@@ -410,7 +410,7 @@ Threats to validity:
 | Interpretation validity | SHAP explanations may be overinterpreted as causal explanations. |
 | External validity | The results were not tested on another event log. |
 
-Future improvements should include threshold tuning, calibration analysis, evaluation by prefix length, runtime measurements, stronger checks for leakage-prone features, and validation on another event log. It would also be useful to discuss the outcome definition with domain knowledge instead of relying only on final lifecycle transitions.
+The single highest-priority follow-up is stratifying evaluation by prefix length: because predictive-monitoring performance depends on how much of a case has already been observed, a single aggregate metric hides the earliness–accuracy trade-off that matters most for operational use, and the current numbers may also be dominated by long cases that contribute more prefix rows. Beyond that, future improvements should include threshold tuning, calibration analysis, runtime measurements, stronger checks for leakage-prone features, and validation on another event log. It would also be useful to discuss the outcome definition with domain knowledge instead of relying only on final lifecycle transitions.
 
 ## 9. Project Retrospective
 
