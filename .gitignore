@@ -208,7 +208,28 @@ __marimo__/
 
 
 
-#EVENT LOGS
-.xes
-.csv
-.xml
+# macOS
+.DS_Store
+
+# Generated outputs (regenerate via scripts/run_pipeline.py or the notebooks)
+outputs/figures/
+outputs/reports/
+figures/
+reports/
+models/
+notebooks/figures/
+notebooks/reports/
+
+# Event logs and generated CSV reports (keep the small test fixture)
+*.xes
+*.csv
+!tests/data/*.xes
+
+
+# Keep assessment documentation assets
+!docs/
+!docs/figures/
+!docs/figures/**
+!docs/ASSESSMENT.md
+!docs/ASSESSMENT.pdf
+!docs/PHASE_REVIEW.md

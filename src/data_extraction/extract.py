@@ -24,7 +24,6 @@ def import_data(file_path: str, str_caseID: str = None, str_activity: str = None
         raise ValueError("Unsupported File Type. Must be .xes or .csv")
     
     df = _postprocess(df,drop_columns)
-    print(df)
     return df
 
 

@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 from scipy.sparse import csr_matrix
 
-from src.featureEngineering.feature_encoding import Encode
+from src.feature_engineering.feature_encoding import Encode
 
 
 # ============================================================================

@@ -11,8 +11,8 @@ outcome is derived from the last lifecycle transition of each original case.
 ## Project Structure
 
 ```text
-src/dataExtraction/        Event log loading helpers
-src/featureEngineering/    Outcome labels, feature encoding, and prefix generation
+src/data_extraction/        Event log loading helpers
+src/feature_engineering/    Outcome labels, feature encoding, and prefix generation
 src/modeling/              Baseline, model training, selection, and evaluation
 src/pipeline/              Reusable training and evaluation pipelines
 scripts/                   Command-line entry point for the complete pipeline
@@ -25,8 +25,8 @@ notebooks/                 Exploration notebooks and the final Sprint 3 notebook
 
 ## Setup
 
-The project was developed with Python 3.11. Create and activate a virtual
-environment from the repository root:
+The project was developed and tested with Python 3.13. Create and activate a
+virtual environment from the repository root:
 
 ```bash
 python3 -m venv .venv
@@ -40,15 +40,26 @@ Install the project dependencies:
 python -m pip install -r requirements.txt
 ```
 
-Place the BPI Challenge 2013 incidents event log under:
+Download the BPI Challenge 2013 incidents event log. The script fetches the log
+from its public 4TU.ResearchData record, verifies the checksum, and unpacks it
+into `data/raw/BPI_Challenge_2013_incidents/`:
 
-```text
-data/raw/BPI_Challenge_2013_incidents/
+```bash
+python scripts/download_data.py
 ```
 
-The repository currently contains local generated reports, figures, and model
-artifacts from earlier sprints. For a clean run, regenerate outputs from the
-notebooks or modules instead of editing those files manually.
+The download uses only the Python standard library and is idempotent: it skips
+files that already exist (use `--force` to re-download).
+
+Generated reports, figures, and model artifacts are not tracked in version
+control. They are recreated when you run the pipeline or the notebooks, so a
+fresh checkout stays clean.
+
+### SHAP is optional
+
+`shap` powers the explanation plots and is the only heavy runtime dependency.
+It is imported lazily, so the rest of the pipeline runs without it. To skip
+explanations entirely, pass `--no-shap` to the command-line entry point.
 
 ## Dataset
 
@@ -101,43 +112,50 @@ Run a single file:
 .venv/bin/pytest tests/test_explainability.py -v
 ```
 
-The suite contains 23 tests across 7 files:
+The suite contains 179 tests across 11 files:
 
-**`test_baseline.py`**
-- Majority baseline always predicts the most frequent training class.
+**`test_extract.py` (48)**
+- Event-log import for XES and CSV, required-column validation, and column dropping.
+- Temporal train/validation/test split: ratio validation, no case overlap across splits, and all events of a case kept together.
 
-**`test_evaluation.py`**
-- Basic metric computation (`accuracy`, `f1`, `precision`, `recall`).
-- ROC AUC computation from predicted scores.
-- `evaluate_model` called directly; fallback when a model has no `predict_proba`.
-- Multi-model ROC curve figure (`save_roc_curves`).
-- Confusion matrix and single-model ROC figure creation.
-- Model comparison table and bar chart creation.
+**`test_outcome_labelling.py` (59)**
+- Rule-based outcome engine: supported operators, rule validation, and uniform case-level labels.
+- Legacy duration-based outcome helpers used by the exploration and baseline notebooks.
 
-**`test_explainability.py`**
-- `prepare_shap_dataframe` preserves feature names from a numpy array.
-- `prepare_shap_dataframe` truncates rows when `max_samples` is set.
-- Global SHAP summary plot and importance table creation.
-- Global SHAP importance bar chart creation (`save_global_shap_importance_plot`).
-- Local SHAP bar plot creation for a single row.
-- `save_local_shap_bar_plot` raises `IndexError` for an out-of-bounds row index.
-- `select_local_explanation_indices` finds all three case types with mixed predictions.
-- `select_local_explanation_indices` returns `None` for misclassified when all predictions are correct.
+**`test_prefix_generation.py` (32)**
+- Prefix counts, ordering, naming, full-trace exclusion, and no future events in any prefix.
 
-**`test_model_selection.py`**
-- `select_best_random_forest` returns a fitted model, the best parameter dict, and a results table.
+**`test_feature_encoding.py` (17)**
+- Feature-matrix shape, feature-column reuse across splits, missing-column handling, and temporal features.
 
-**`test_pipeline.py`**
-- Full training and evaluation pipeline run on a synthetic event log (SHAP disabled for speed).
+**`test_explainability.py` (8)**
+- `prepare_shap_dataframe` preserves feature names and truncates rows when `max_samples` is set.
+- Global SHAP summary, importance table, and importance bar chart creation.
+- Local SHAP bar plot creation; `save_local_shap_bar_plot` raises `IndexError` for an out-of-bounds row index.
+- `select_local_explanation_indices` finds all three case types with mixed predictions and returns `None` for misclassified when all predictions are correct.
 
-**`test_prediction_output.py`**
+**`test_evaluation.py` (7)**
+- Metric computation (`accuracy`, `f1`, `precision`, `recall`) and ROC AUC from predicted scores.
+- `evaluate_model` fallback when a model has no `predict_proba`.
+- Multi-model ROC curves, confusion matrix, single-model ROC, and model comparison table and bar chart.
+
+**`test_prediction_output.py` (3)**
 - `create_prediction_output` includes all required metadata columns.
 - Invalid probabilities outside `[0, 1]` are rejected.
 - `save_model_prediction_output` writes a valid CSV; `load_prediction_output` reads it back.
 
-**`test_prototype_predict_explain.py`**
+**`test_prototype_predict_explain.py` (2)**
 - `predict_and_explain_case` returns a prediction, a probability, and the requested number of top features.
 - Multi-row input raises `ValueError`.
+
+**`test_baseline.py` (1)**
+- Majority baseline always predicts the most frequent training class.
+
+**`test_model_selection.py` (1)**
+- `select_best_random_forest` returns a fitted model, the best parameter dict, and a results table.
+
+**`test_pipeline.py` (1)**
+- Full training and evaluation pipeline run on a synthetic event log (SHAP disabled for speed).
 
 ## Current Pipeline
 
@@ -243,12 +261,12 @@ The output includes `case_id`, `y_true`, `prediction`, `probability`, `model`,
 
 ## Prefix-Level Prediction
 
-Prefix generation is implemented in `src/featureEngineering/prefix_generation.py`.
+Prefix generation is implemented in `src/feature_engineering/prefix_generation.py`.
 The function removes the full-length trace from the generated prefix set to
 reduce direct target leakage.
 
 ```python
-from src.featureEngineering.prefix_generation import generate_prefix
+from src.feature_engineering.prefix_generation import generate_prefix
 
 train_prefix_df = generate_prefix(train_df)
 val_prefix_df = generate_prefix(val_df)

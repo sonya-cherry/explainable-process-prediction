@@ -3,7 +3,10 @@ numpy
 matplotlib
 scikit-learn>=1.8,<1.9
 scipy
-shap
 pytest
 joblib
 pm4py
+
+# Optional: only needed for SHAP explanations. The pipeline imports it lazily
+# and runs without it when invoked with --no-shap.
+shap

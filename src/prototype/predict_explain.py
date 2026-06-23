@@ -3,10 +3,10 @@ from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
-import shap
 
 from src.explainability.shap_explainer import (
     _get_positive_class_shap_values,
+    _require_shap,
     prepare_shap_dataframe,
     save_local_shap_bar_plot,
 )
@@ -29,6 +29,7 @@ def _top_shap_features(
     top_n: int,
 ) -> list[dict[str, float | str]]:
     """Compute top local SHAP contributors for one feature row."""
+    shap = _require_shap()
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(row)
     positive_values = _get_positive_class_shap_values(shap_values)

@@ -9,7 +9,7 @@ Run all:   pytest test_prefix.py -v
 import pandas as pd
 import pytest
 
-from src.featureEngineering.prefix_generation import generate_prefix
+from src.feature_engineering.prefix_generation import generate_prefix
 
 
 # ===========================================================================
